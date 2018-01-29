@@ -657,19 +657,19 @@ class Calculator():
         self.tau = np.arange(0., 2., 0.01)
         self.S = (self.Ilambd[self.f])*(self.p2[2] + self.tau*self.p2[1] + (self.tau**2)*self.p2[0]/2 )
     
-        self.Ratio1[self.f] = (self.hPl*self.clight)/(2*(self.kBolz*self.lambd[self.f]))
+        self.Ratio1[self.f] = (self.hPl*self.clight)/((self.kBolz*self.lambd[self.f]))
         print ("Ratio1 ", self.Ratio1)
         self.Ratio2[self.f] = (2*self.hPl*(self.clight**2))/(self.lambd[self.f]**5)
         print ("Ratio2 ", self.Ratio2)
         #print("Ratio1 for filter" + str(self.f) + ' - ' + self.FilterName[self.f] + ' is ' + str(self.Ratio1[self.f]))
         #print("Ratio2 for filter" + str(self.f) + ' - ' + self.FilterName[self.f] + ' is ' + str(self.Ratio2[self.f]))
     
-        self.Ttaul = self.Ratio1[self.f] / (np.log10(1 + self.Ratio2[self.f]/self.S ))
+        self.Ttaul = self.Ratio1[self.f] / (np.log(1 + self.Ratio2[self.f]/self.S ))
         #print ("Ttaul ", self.Ttaul)
         self.tau23 = 0.666
         self.Seff = (self.Ilambd[self.f])*(self.p2[2] + (self.tau23)*self.p2[1] + (self.tau23**2)*self.p2[0]/2 )
         #print("Seff ", self.Seff)
-        self.Teff = self.Ratio1[self.f] / (np.log10(1 + self.Ratio2[self.f]/self.Seff))
+        self.Teff = self.Ratio1[self.f] / (np.log(1 + self.Ratio2[self.f]/self.Seff))
         #print ("Teff ", self.Teff)
         #print("EFFECTIVE TEMPERATURE for filter " + FilterName[f] + " " + str(Teff))    
     #    ErrorTeff = 2*ErrorI + deltalambd[f] 
