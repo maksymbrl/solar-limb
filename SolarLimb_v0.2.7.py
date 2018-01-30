@@ -468,6 +468,7 @@ class Calculator():
             
         # Setting a sizer to a panel   
         DataPanel.SetSizer(DataPanel.gridSizerShow)
+        #DataPanel.Update()
         ####################################################################################
         ################################
         ##Resulting picture of the Sun##
@@ -575,6 +576,10 @@ class Calculator():
         # Clearing the axes
         ResultPanel.listAxe[0].clear()
         ResultPanel.listAxe[0].imshow(c)
+        # Setting the axes labels
+        ResultPanel.listAxe[0].set_xlabel(r'Linear position')
+        ResultPanel.listAxe[0].set_ylabel('Intensity (ADU)')
+        # Setting the central points of the sun
         ResultPanel.listAxe[0].plot([self.FirstPoint[0]], [self.FirstPoint[1]], marker='^', color='g')
         ResultPanel.listAxe[0].plot([self.SecondPoint[0]], [self.SecondPoint[1]], marker='o', color='r')
         ResultPanel.listAxe[0].plot([self.ThirdPoint[0]], [self.ThirdPoint[1]], marker='s', color='y')
@@ -846,9 +851,9 @@ class TabPanel(wx.Panel):
         ResultPanel.labelThreshold = wx.StaticText(ResultPanel, label = " Threshold:")
         ResultPanel.textCtrlThreshold = wx.TextCtrl(ResultPanel, value = "10000", size = (-1, -1))
         
-        self.lambd = ["1", "420e-9", "547e-9", "871e-9", "648e-9"]
-        self.Ilambd = ['1', '3.6e13', '4.5e13', '1.6e13', '2.8e13']
-        self.deltalambd = ["17.5", "45", "16.5", "118", "78.5"]
+        self.lambd = ["1", "420e-9", "547e-9", "648e-9", "871e-9"]
+        self.Ilambd = ["1", "3.6e13", "4.5e13", "2.8e13", "1.6e13"]
+        self.deltalambd = ["17.5", "45", "16.5", "78.5", "118"]
         
         # for finding the right value of the right combobox
         ResultPanel.comboSelection = ['' for f in xrange(0, 3)]
@@ -1095,6 +1100,11 @@ class TabPanel(wx.Panel):
         # Invoking methods from class Calculator
         Calculator().ShowImages(DataPanel, DataPanel.listLength, DataPanel.listPaths, 
                   ResultPanel, globalPageIndex)
+        
+        #self.Update()
+        #DataPanel.Update()
+        #DataPanel.Refresh()
+        #ResultPanel.Update()
         #---------------------------------------------------------------------#
         #retrieving calculated data
         global globalTeff
@@ -1176,14 +1186,16 @@ class NameDialog(wx.Dialog):
         self.nameResult = self.field.GetValue()
         #if self.nameResult == '':
         if self.nameResult == '':
+            #self.nameResult = None
             None
         else:
             self.tabResult = self.nameResult
-        self.Destroy()
+            self.Destroy()
         
     ''' Method for closeButton '''    
     def OnCancel(self, event):
         self.nameResult = None
+        self.tabResult = ''
         self.Destroy()      
 ###############################################################################
 #class DataTransfer(object):
@@ -1487,14 +1499,16 @@ class MainFrame(wx.Frame):
     ''' Method for adding new tab '''
     def AddTab(self, event, tabName):
         
+
         self.panel = TabPanel(self.auiNotebook)
         self.auiNotebook.AddPage(self.panel, tabName)
+        self.auiManager.Update() 
         #Getting the index of newly created tab
         #---------------------------------------------------------------------#
         # Splitting the page programmatically
         #self.auiNotebook.Split(self.tab_num, wx.RIGHT)
         # tell the manager to "commit" all the changes just made
-        self.auiManager.Update()        
+               
         #self.tab_num += 1
         
         #to account for any changes, we need to do the following procedure
@@ -1516,8 +1530,8 @@ class MainFrame(wx.Frame):
         # calling the AddTab class which will create a new tab with the
         # specified name
         #if tabName != None:
-        #if tabName != '':
-        self.AddTab(event, tabName)
+        if tabName != "":
+            self.AddTab(event, tabName)
         
     
     ''' Method for getting the index of the chosen tab (by click) ''' 
