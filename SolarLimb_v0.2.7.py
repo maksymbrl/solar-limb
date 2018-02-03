@@ -1348,6 +1348,7 @@ class CombinedInfoPanel(wx.Panel):
         #print ("globalIlArray ", globalIlArray)
         
         global globalTeffArray
+        global globalTeffErrorArray
         #print ("globalTeffArray ", globalTeffArray)
         #globalTeffArray = [0 for col in range(7)]
         #globalTeffArray[self.f] = self.Teff
@@ -1368,13 +1369,40 @@ class CombinedInfoPanel(wx.Panel):
         global globalA2ErrorArray
         #Weighted average of effective temperature
         self.TeffSum = 0
+        self.TeffErrorSum = 0
+        self.TeffErrorSum2 = 0
         self.TeffFinal = 0
         #self.numberOfTemperatures = 0
         for f in range(0, globalNumberOfPages):
-            self.TeffSum += globalTeffArray[f]
+            #self.TeffSum += globalTeffArray[f]
+            self.TeffSum += globalTeffArray[f]/np.power(globalTeffErrorArray[f],2)
+            self.TeffErrorSum += 1/np.power(globalTeffErrorArray[f],2)
+            self.TeffErrorSum2 += np.power((globalTeffErrorArray[f]* np.power(globalTeffArray[f],-1)),2)
+            #self.TeffFinal = (np.sum(globalTeffArray/np.power(globalTeffErrorArray,2)) / (np.sum(1/np.power(globalTeffErrorArray,2))))
             #o += 1
     
-        self.TeffFinal = self.TeffSum/globalNumberOfPages
+        #self.TeffFinal = self.TeffSum/globalNumberOfPages
+        #Calculating the final effictive temperature via weighted mean average 
+        #self.TeffFinal = (np.sum(globalTeffArray/np.power(globalTeffErrorArray,2)) / (np.sum(1/np.power(globalTeffErrorArray,2))))
+        self.TeffFinal = self.TeffSum/self.TeffErrorSum
+        # Calculating the error associated with final effective temperature
+        #self.TeffFinalError = self.TeffFinal*np.sqrt( np.sum(np.power((globalTeffErrorArray* np.power(globalTeffArray,-1) ),2)) )
+        self.TeffFinalError = self.TeffFinal*np.sqrt(self.TeffErrorSum2)
+        #Teff = [6173.43, 6219.78, 6032.82]
+        #Sigma = [90.01, 438.82, 157.00 ]
+        #print(np.sum(Teff/np.power(Sigma,2)))
+        #print(np.sum(1/np.power(Sigma,2)))
+        
+        #print(np.sum(Teff/np.power(Sigma,2)) / np.sum(1/np.power(Sigma,2)))
+        
+        #FinalTeff = (np.sum(Teff/np.power(Sigma,2)) / (np.sum(1/np.power(Sigma,2))))
+        #print(FinalTeff)
+        #print("Final effective temperature!: ", FinalTeff)
+        
+        # Error associated with the finaal effective temperature
+        
+        #FinalErrTeff = FinalTeff*np.sqrt( np.sum(np.power((Sigma* np.power(Teff,-1) ),2)) )
+        #print("Final uncertainty in effective temperature!: ", FinalErrTeff)
         
         #print ('TeffFinal is ', self.TeffFinal)
         #print ('A0Array', globalA0Array)
@@ -1493,13 +1521,13 @@ class CombinedInfoPanel(wx.Panel):
         #for rowIndex in xrange(1,6):
         for columnIndex in xrange (1, (globalNumberOfPages+1)):
             #here we are inserting the first value of the row
-            self.listControlFinalDataTable.SetStringItem(0, columnIndex, "%.2f" % globalA0Array[self.trickyIndex]+'+/-'+str("%.2f" % globalA0ErrorArray[self.trickyIndex]))
-            self.listControlFinalDataTable.SetStringItem(1, columnIndex, "%.2f" % globalA1Array[self.trickyIndex]+'+/-'+str("%.2f" % globalA1ErrorArray[self.trickyIndex]))
-            self.listControlFinalDataTable.SetStringItem(2, columnIndex, "%.2f" % globalA2Array[self.trickyIndex]+'+/-'+str("%.2f" % globalA2ErrorArray[self.trickyIndex]))
-            self.listControlFinalDataTable.SetStringItem(3, columnIndex, "%.2f" % globalTeffArray[self.trickyIndex])
+            self.listControlFinalDataTable.SetStringItem(0, columnIndex, "%.2f" % globalA0Array[self.trickyIndex] + '+/-' + "%.2f" % globalA0ErrorArray[self.trickyIndex])
+            self.listControlFinalDataTable.SetStringItem(1, columnIndex, "%.2f" % globalA1Array[self.trickyIndex] + '+/-' + "%.2f" % globalA1ErrorArray[self.trickyIndex])
+            self.listControlFinalDataTable.SetStringItem(2, columnIndex, "%.2f" % globalA2Array[self.trickyIndex] + '+/-' + "%.2f" % globalA2ErrorArray[self.trickyIndex])
+            self.listControlFinalDataTable.SetStringItem(3, columnIndex, "%.2f" % globalTeffArray[self.trickyIndex] + '+/-' + "%.2f" % globalTeffErrorArray[self.trickyIndex])
             self.trickyIndex = self.trickyIndex + 1
                 #self.list_ctrl.SetStringItem(rowIndex, 2, "USA")
-        self.listControlFinalDataTable.SetStringItem(4, 1, str("%.2f" % self.TeffFinal))
+        self.listControlFinalDataTable.SetStringItem(4, 1, "%.2f" % self.TeffFinal + '+/-' + "%.2f" % self.TeffFinalError)
         #putting table in the sizer
         self.tableSizer.Add(self.listControlFinalDataTable, 1, wx.ALL)
         #---------------------------------------------------------------------#
