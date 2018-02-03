@@ -7,8 +7,10 @@ Created on Tue Jan 09 14:15:16 2018
 # to prevent error of division by 0
 from __future__ import division
 from __future__ import unicode_literals
+#from __future__ import print_function
 
 import os, os.path
+import matplotlib
 from scipy.interpolate import *
 from pylab import *
 import matplotlib.lines as mlines
@@ -24,6 +26,8 @@ import wx.lib.agw.aui as aui
 import wx.grid as gridlib
 # regular pubsub import - for transferring variables
 from wx.lib.pubsub import pub
+# the easiest way to get the full statistical results for the fit is to use statsmodels
+import statsmodels.api as sm 
 # to show borders around sizers and other stuff - making app more interactive
 #import wx.lib.inspection
 #import wx.lib.mixins.inspection
@@ -34,6 +38,8 @@ import matplotlib.pyplot as plt
 import numpy as np
 from scipy import misc
 from matplotlib.backends.backend_wxagg import FigureCanvasWxAgg as FigureCanvas
+import random
+import wx.lib.mixins.listctrl  as  listmix
 #from Tkinter import *
 #from matplotlib.figure import Figure
 
@@ -138,15 +144,7 @@ class Calculator():
         self.TeffArray = [0 for col in range(7)]
         self.TtaulArray = [0 for col in range(7)]
         
-        self.ColShape = ['w--', 'rv', 'bs', 'c.', 'm^', 'b:']
-        self.ColShape2 = ['w--', 'rv', 'r-', 'b-.', 'm--', 'b:']
-        self.Color = ['w', 'm', 'r', 'b', 'c', 'm']
-        self.Color2 = ['w', 'r', 'r', 'b.', 'm', 'b']
-        self.Shape = [u'D', u'v', u's', u'.', u'^', u'o'] # I changed the first one from u'--' to u'd'
-        self.Shape2 = [u'--', u'-', u'--', u'-.', u'--', u':']
-        self.lines = [0 for col in range(7)]
-        self.labels = [0 for col in range(7)]
-        
+        self.delMiuk = 0
         #global Teff
         
         # to retrieve the index of the chosen page
@@ -336,6 +334,7 @@ class Calculator():
                 self.R = float(self.SecondPoint[0]-self.Cx[self.index])
                 self.rin[0] = float(0)
                 self.rout[0] = float(self.R/9)
+                
                 # Here we dicvide our sun for nine regions (concentric rings) 
                 #with the center in the solar center,
                 # and look for distance parameter and intensity ratio:
@@ -639,12 +638,46 @@ class Calculator():
         print ("miuk1 ", self.miuk1)
         print ("Il1 ", self.Il1)
         
-        self.p2 = np.polyfit(self.miuk1, self.Il1, 2)    
+        #self.p2 = [0 for i in xrange (0, 3)]
+        #degree of polynomial
+        #n=2
+        #self.p2, res, _, _, _ = np.polyfit(self.miuk1, self.Il1, n, full=True)
+        #self.p2= np.polyfit(self.miuk1, self.Il1, n)
+        #self.p2Array[self.f] = self.p2
+        n=3
+        #results = sm.OLS(self.Il1, np.vander(self.miuk1, n)).fit()
+        # roughly speaking it provides you with any possible test
+        results = sm.OLS(self.Il1, np.vander(self.miuk1, n)).fit()
+        print (results.summary())
+        # these parameters should be the same as for polyfit (and they are the same,
+        # the only difference here is that n=3, I don't know why:))
+        print ('Parameters:', results.params)
+        self.p2 = results.params
         self.p2Array[self.f] = self.p2
+        print('Standard errors: ', results.bse)
+        #dir(results)
         
+        #print ('residuals', res)
+        #print ('p2', p2)
+        #print ('S', S)
+        #print ('Erro and St deviation is', mu)
+        
+        # Do the interpolation for plotting:
+        #t = np.linspace(-0.5, 6.5, 500)
+        # Matrix with rows 1, t, t**2, ...:
+        #TT = np.vstack([t**(n-i) for i in range(n+1)]).T
+        #yi = np.dot(TT, self.p2)  # matrix multiplication calculates the polynomial values
+        #C_yi = np.dot(TT, np.dot(C_p, TT.T)) # C_y = TT*C_z*TT.T
+        #sig_yi = np.sqrt(np.diag(C_yi))  # Standard deviations are sqrt of diagonal
+        #print ('sig_yi = ', sig_yi)
+        #Coefficients
         global globalA0
         global globalA1
         global globalA2
+        #Errors to be shown in the final table
+        global globalA0Error
+        global globalA1Error
+        global globalA2Error
         
         print(" ")
         #print("Second order fit coefficients for filter " + self.FilterName[self.f])
@@ -658,6 +691,10 @@ class Calculator():
         globalA0 = self.p2[2]
         globalA1 = self.p2[1]
         globalA2 = self.p2[0]/2
+        
+        globalA0Error = results.bse[2]
+        globalA1Error = results.bse[1]
+        globalA2Error = results.bse[0]/2
         
         self.tau = np.arange(0., 2., 0.01)
         self.S = (self.Ilambd[self.f])*(self.p2[2] + self.tau*self.p2[1] + (self.tau**2)*self.p2[0]/2 )
@@ -675,21 +712,37 @@ class Calculator():
         self.Seff = (self.Ilambd[self.f])*(self.p2[2] + (self.tau23)*self.p2[1] + (self.tau23**2)*self.p2[0]/2 )
         #print("Seff ", self.Seff)
         self.Teff = self.Ratio1[self.f] / (np.log(1 + self.Ratio2[self.f]/self.Seff))
-        #print ("Teff ", self.Teff)
-        #print("EFFECTIVE TEMPERATURE for filter " + FilterName[f] + " " + str(Teff))    
-    #    ErrorTeff = 2*ErrorI + deltalambd[f] 
-    #    deltaTeff = abs(Teff*(1-abs(ErrorTeff)))
-    #    print("Delta Teff " + str(deltaTeff))
+        # calculating the result error for the coefficients
+        k=9
+        WholeError = ((results.bse[2]/results.params[2])**2 + (results.bse[1]/results.params[1])**2
+                      +(results.bse[0]/results.params[0]/2)**2
+                      +2*(results.bse[2]/results.params[2])*(results.bse[1]/results.params[1])
+                      +2*(results.bse[1]/results.params[1])*(results.bse[0]/results.params[0]/2)
+                      +2*(results.bse[0]/results.params[0]/2)*(results.bse[2]/results.params[2])) 
+        SEr = np.sqrt(WholeError**2 + self.deltalambd[self.f]**2 )
+        TeffError = np.sqrt((self.deltalambd[self.f])**2 + (np.var(self.miuk)/(k+1))**2 + SEr**2
+                       +2*self.deltalambd[self.f]*np.var(self.miuk)/(k+1) +2*self.deltalambd[self.f]*SEr +2*SEr*np.var(self.miuk)/(k+1))
+        #print("Effective temperature: " + str(Teff) + ' +/- ' + str(TeffError) )
         
         self.IlArray[self.f] = self.Il
         self.TeffArray[self.f] = self.Teff
         self.TtaulArray[self.f] = self.Ttaul
         
         self.polyval = np.polyval(self.p2Array[self.f],self.miuk1)
-        
+        #---------------------------------------------------------------------#
+        #self.variance = [0 for i in xrange (0, 7)]
+        #self.error = [0 for i in xrange (0, 7)]
+        #calculating the variance
+        #self.variance[1] = self.polyval[1] - self.p2[1]
+        #print ("Variance!!!!", self.variance[1])
+        #self.error[1] = np.sqrt(self.variance[1]/5)
+        #print ("Error in a1!!!!", self.error[1])
+        #---------------------------------------------------------------------#
         # assiging global variables to retrieve their values later
         global globalTeff
         globalTeff = self.Teff
+        global globalTeffError
+        globalTeffError = TeffError
         global globalTtaul
         globalTtaul = self.Ttaul
         global globalIl
@@ -702,6 +755,8 @@ class Calculator():
         
         global globalPolyval
         globalPolyval = self.polyval
+        
+
         # identifying global variables to plot the resulting graph
         #global globalIlArray
         #globalIlArray = [0 for col in range(7)]
@@ -716,6 +771,15 @@ class Calculator():
         #globalTtaulArray = [0 for col in range(7)]
         #globalTtaulArray[self.f] = self.Ttaul
         
+        self.ColShape = ['rv', 'rv', 'bs', 'c.', 'm^', 'b:']
+        self.ColShape2 = ['rv', 'rv', 'r-', 'b-.', 'm--', 'b:']
+        self.Color = ['w', 'm', 'r', 'b', 'c', 'm']
+        self.Color2 = ['w', 'r', 'r', 'b.', 'm', 'b']
+        self.Shape = [u'D', u'v', u's', u'.', u'^', u'o'] # I changed the first one from u'--' to u'd'
+        self.Shape2 = [u'--', u'-', u'--', u'-.', u'--', u':']
+        self.lines = [0 for col in range(7)]
+        self.labels = [0 for col in range(7)]
+        
         #Drawing the pre-last curve
         # Drawing the data on the canvas
         ResultPanel.listFigure[2].set_canvas(ResultPanel.listFigureCanvas[2])
@@ -727,12 +791,12 @@ class Calculator():
         #plt.plot(miuk, Il, 'g^')    
         ResultPanel.listAxe[2].plot(self.miuk1, self.polyval)   
         #plt.legend([red_dot, (red_dot, white_cross), ], ["B", "I", "R"])
-        self.line2 = mlines.Line2D([], [], color='r', marker='^', markersize=5, label="B")
-        self.line3 = mlines.Line2D([], [], color='b', marker='s', markersize=5, label="I")
-        self.line4 = mlines.Line2D([], [], color='g', marker='.', markersize=5, label="R")
-        self.lines = [self.line2, self.line3, self.line4]
-        self.labels = [self.line.get_label() for self.line in self.lines]
-        ResultPanel.listAxe[2].legend(self.lines, self.labels)
+        #self.line2 = mlines.Line2D([], [], color='r', marker='^', markersize=5, label="B")
+        #self.line3 = mlines.Line2D([], [], color='b', marker='s', markersize=5, label="I")
+        #self.line4 = mlines.Line2D([], [], color='g', marker='.', markersize=5, label="R")
+        #self.lines = [self.line2, self.line3, self.line4]
+        #self.labels = [self.line.get_label() for self.line in self.lines]
+        #ResultPanel.listAxe[2].legend(self.lines, self.labels)
         ResultPanel.listFigureCanvas[2].draw()
         
         #Drawing the last curve
@@ -747,12 +811,12 @@ class Calculator():
         ResultPanel.listAxe[3].plot(self.tau, self.Ttaul, self.ColShape2[self.f])
         ResultPanel.listAxe[3].plot(self.tau23, self.Teff, self.ColShape2[self.f])
 
-        self.line2 = mlines.Line2D([], [], color='m', linestyle=self.Shape2[2], label="B")
-        self.line3 = mlines.Line2D([], [], color='r', linestyle=self.Shape2[1], label="I")
-        self.line4 = mlines.Line2D([], [], color='b', linestyle=self.Shape2[3], label="R")
-        self.lines = [self.line2, self.line3, self.line4]
-        self.labels = [self.line.get_label() for self.line in self.lines]
-        ResultPanel.listAxe[3].legend(self.lines, self.labels)
+        #self.line2 = mlines.Line2D([], [], color='m', linestyle=self.Shape2[2], label="B")
+        #self.line3 = mlines.Line2D([], [], color='r', linestyle=self.Shape2[1], label="I")
+        #self.line4 = mlines.Line2D([], [], color='b', linestyle=self.Shape2[3], label="R")
+        #self.lines = [self.line2, self.line3, self.line4]
+        #self.labels = [self.line.get_label() for self.line in self.lines]
+        #ResultPanel.listAxe[3].legend(self.lines, self.labels)
         ResultPanel.listFigureCanvas[3].draw()
         
         #Atlast, the effective temperature
@@ -979,10 +1043,16 @@ class TabPanel(wx.Panel):
         global globalmiukArray
         global globalmiuk1Array
         global globalPolyvalArray
-        #identifying global variable to have a an array of coefficients
+        #identifying global variable to have an array of coefficients
         global globalA0Array
         global globalA1Array
         global globalA2Array
+        #identifying tha same for errors in coefficients
+        global globalA0ErrorArray
+        global globalA1ErrorArray
+        global globalA2ErrorArray
+        # error in the temperatures
+        global globalTeffErrorArray
         #print globalPageIndex
         # indentifying the global variable to address it from other classes
         #global globalNumberOfPages
@@ -1109,6 +1179,9 @@ class TabPanel(wx.Panel):
         #retrieving calculated data
         global globalTeff
         print ("globalTeff ", globalTeff)
+        # error in effective temperature for each particular filter
+        global globalTeffError
+        
         global globalTtaul
         print ("globalTtaul ", globalTtaul)
         
@@ -1117,16 +1190,22 @@ class TabPanel(wx.Panel):
         global globalmiuk1
         
         global globalPolyval
-        
+        #instantiating the coefficients
         global globalA0
         global globalA1
         global globalA2
+        #instantiating errors for coefficients
+        global globalA0Error
+        global globalA1Error
+        global globalA2Error
         #---------------------------------------------------------------------#
         #globalIlArray[globalPageIndex] = Il
         #print ("globalIlArray ", globalIlArray)
         #filling in the global array to show its data on the resulting screen
         globalTeffArray[globalPageIndex] = globalTeff
         print ("globalTeffArray", globalTeffArray)
+        globalTeffErrorArray[globalPageIndex] = globalTeffError
+        print ("globalTeffErrorArray", globalTeffErrorArray)
         globalTtaulArray[globalPageIndex] = globalTtaul
         globalIlArray[globalPageIndex] = globalIl
         
@@ -1134,11 +1213,14 @@ class TabPanel(wx.Panel):
         globalmiuk1Array[globalPageIndex] = globalmiuk1
         
         globalPolyvalArray[globalPageIndex] = globalPolyval
-        
+        #putting coefficients for different tabs into one array
         globalA0Array[globalPageIndex] = globalA0
         globalA1Array[globalPageIndex] = globalA1
         globalA2Array[globalPageIndex] = globalA2
-        
+        #putting errors for coefficients into one array
+        globalA0ErrorArray[globalPageIndex] = globalA0Error
+        globalA1ErrorArray[globalPageIndex] = globalA1Error
+        globalA2ErrorArray[globalPageIndex] = globalA2Error
         #self.IlArray[self.f] = self.Il
         #self.TeffArray[self.f] = self.Teff
         #self.TtaulArray[self.f] = self.Ttaul
@@ -1198,13 +1280,47 @@ class NameDialog(wx.Dialog):
         self.tabResult = ''
         self.Destroy()      
 ###############################################################################
-#class DataTransfer(object):
-#    def __init__(self):
-#        pub.subscribe(self.RetrievingData, 'data.retrieved')
-# 
-#    def RetrievingData(self, numberOfPages):
-#        self.numberOfPages = numberOfPages
-#        print self.numberOfPages
+class AboutFrame(wx.Frame):
+    def __init__(self):
+        #First retrieve the screen size of the device
+        #screenSize = wx.DisplaySize()
+        #First retrieve the screen size of the device
+        screenSize = wx.DisplaySize()
+        screenWidth = screenSize[0]/2
+        screenHeight = screenSize[1]/2
+        
+        wx.Frame.__init__(self, None, wx.ID_ANY, "About the program", size = (screenWidth, screenHeight))
+        
+        DescriptionPanel = ScrolledPanel(self, -1, style=wx.SIMPLE_BORDER)
+        VersionPanel = ScrolledPanel(self, -1, style=wx.SIMPLE_BORDER)
+        
+        DescriptionPanel.SetupScrolling()
+        DescriptionPanel.SetBackgroundColour('#FDDF99')
+
+        VersionPanel.SetupScrolling()
+        VersionPanel.SetBackgroundColour('#FFFFFF') 
+        # creating an AUI manager
+        self.auiManager = aui.AuiManager()
+        # tell AuiManager to manage this frame
+        self.auiManager.SetManagedWindow(self)
+        # defining the notebook variable
+        self.auiNotebook = aui.AuiNotebook(self)
+        
+        #self.auiNotebook.AddPage(self.panel, tabName)
+        self.auiNotebook.AddPage(DescriptionPanel, 'Program Description')
+        self.auiNotebook.AddPage(VersionPanel, 'Program Version')
+        self.auiManager.Update() 
+###############################################################################
+''' Method for managing listCTrl '''
+class EditableListCtrl(wx.ListCtrl, listmix.TextEditMixin):
+    ''' TextEditMixin allows any column to be edited. '''
+ 
+    #----------------------------------------------------------------------
+    def __init__(self, parent, ID=wx.ID_ANY, pos=wx.DefaultPosition,
+                 size=wx.DefaultSize, style=0):
+        """Constructor"""
+        wx.ListCtrl.__init__(self, parent, ID, pos, size, style)
+        listmix.TextEditMixin.__init__(self)
 ###############################################################################
 ''' Panel for merging data '''
 class CombinedInfoPanel(wx.Panel):
@@ -1246,7 +1362,10 @@ class CombinedInfoPanel(wx.Panel):
         global globalA0Array
         global globalA1Array
         global globalA2Array
-        
+        #initialising an array for errors of coefficients
+        global globalA0ErrorArray
+        global globalA1ErrorArray
+        global globalA2ErrorArray
         #Weighted average of effective temperature
         self.TeffSum = 0
         self.TeffFinal = 0
@@ -1264,8 +1383,9 @@ class CombinedInfoPanel(wx.Panel):
         #globalTtaulArray = [0 for col in range(7)]
         #globalTtaulArray[self.f] = self.Ttaul
         #---------------------------------------------------------------------#
-        self.listControlFinalDataTable = wx.ListCtrl(self, style = wx.LC_REPORT|wx.BORDER_SUNKEN|wx.LC_HRULES|wx.LC_VRULES)
-                                                        #size = (400, 400), pos = (15, 15),
+        #self.listControlFinalDataTable = wx.ListCtrl(self, style = wx.LC_REPORT|wx.BORDER_SUNKEN|wx.LC_HRULES|wx.LC_VRULES)
+        self.listControlFinalDataTable = EditableListCtrl(self, style = wx.LC_REPORT|wx.BORDER_SUNKEN|wx.LC_HRULES|wx.LC_VRULES)
+                                                #size = (400, 400), pos = (15, 15),
                                                      #style = wx.LC_REPORT|wx.BORDER_SUNKEN|wx.LC_HRULES|wx.LC_VRULES)
         #---------------------------------------------------------------------#
         # Adding list of canvases which represnts and will show the final data for a given tab
@@ -1290,6 +1410,29 @@ class CombinedInfoPanel(wx.Panel):
     
                 #self.tableSizer.Add(self.listGrid, 1, wx.EXPAND)
                 #self.resultSizer.Add(self.tableSizer, 0, wx.ALL)
+        #---------------------------------------------------------------------#
+        self.ColShape = ['rv', 'rv', 'bs', 'c.', 'm^', 'b:']
+        self.ColShape2 = ['rv', 'rv', 'r-', 'b-.', 'm--', 'b:']
+        self.Color = ['y', 'm', 'r', 'b', 'c', 'm', 'y', 'm', 'r', 'b', 'c', 'm']
+        #self.Color = ['' for col in range (globalNumberOfPages)]
+        self.Color2 = ['y', 'r', 'r', 'b.', 'm', 'b']
+        self.Shape = [u'.', u'v', u's', u'.', u'^', u'o', u'.', u'v', u's', u'.', u'^', u'o'] # I changed the first one from u'--' to u'd'
+        self.Shape2 = [u'--', u'-', u'--', u'-.', u'--', u':']
+        self.lines = [0 for col in range(globalNumberOfPages)]
+        self.lines2 = [0 for col in range(globalNumberOfPages)]
+        self.labels = [0 for col in range(globalNumberOfPages)]
+        self.labels2 = [0 for col in range(globalNumberOfPages)]
+        #---------------------------------------------------------------------#
+        #List of all available colors in python#
+        #for name, hex in matplotlib.colors.cnames.iteritems():
+        #    COLORS = name
+        #self.Color = random.choice(COLORS)
+        #print (self.Color)
+        #self.line = []
+        self.currentDirectory = os.getcwd()
+        self.saveButton = wx.Button(self, label="Save")
+        self.saveButton.Bind(wx.EVT_BUTTON, self.onSaveFile)
+        #---------------------------------------------------------------------#
         #working with graphs
         self.listAxe[0].set_xlabel(r'$\mu$')
         self.listAxe[0].set_ylabel('Intensity ratio I(0,' + r'$\mu$)' + '/I(0,1)')
@@ -1299,13 +1442,30 @@ class CombinedInfoPanel(wx.Panel):
         
         #drawing actual (resulting) data
         for f in xrange(0, globalNumberOfPages):
+            #making the graph more interactive
+            self.line2 = mlines.Line2D([], [], color=self.Color[f], marker=self.Shape[f], 
+                                      markersize=5, label=globalListPageName[f])
+            self.lines[f] = self.line2
+            
+            self.line3 = mlines.Line2D([], [], color=self.Color[f], marker=self.Shape[f], 
+                                      markersize=5, label=globalListPageName[f])
+            self.lines2[f] = self.line3
             #for plotting in the first canvas
-            self.listAxe[0].scatter(globalmiukArray[f], globalIlArray[f], marker='*')
-            self.listAxe[0].plot(globalmiuk1Array[f], globalPolyvalArray[f]) 
+            self.listAxe[0].scatter(globalmiukArray[f], globalIlArray[f], marker=self.Shape[f])
+            self.listAxe[0].plot(globalmiuk1Array[f], globalPolyvalArray[f], color = self.Color[f])
             #for plotting on the second canvas
-            self.listAxe[1].plot(self.tau, globalTtaulArray[f], marker = '.')#self.ColShape2[self.f])
+            self.listAxe[1].plot(self.tau, globalTtaulArray[f], marker = self.Shape[f], color=self.Color[f])#self.ColShape2[self.f])
             self.listAxe[1].plot(self.tau23, globalTeffArray[f], marker = '*') #self.ColShape2[self.f])
-
+            #horizontal line for temperature (different for each)
+            self.listAxe[1].axhline(globalTeffArray[f], 0, self.tau23/2, color='black', linestyle='--')
+        # plotting the vertical line for temperature (supposed to be the same for each filter)
+        self.listAxe[1].plot([self.tau23, self.tau23], [0, np.amax(globalTeffArray)], color='black', linestyle='--')
+        
+        self.labels = [self.line.get_label() for self.line in self.lines]
+        self.listAxe[0].legend(self.lines, self.labels)
+        
+        self.labels2 = [self.line.get_label() for self.line in self.lines2]
+        self.listAxe[1].legend(self.lines2, self.labels2)
         #self.line2 = mlines.Line2D([], [], color='m', linestyle=self.Shape2[2], label="B")
         #self.line3 = mlines.Line2D([], [], color='r', linestyle=self.Shape2[1], label="I")
         #self.line4 = mlines.Line2D([], [], color='b', linestyle=self.Shape2[3], label="R")
@@ -1333,13 +1493,13 @@ class CombinedInfoPanel(wx.Panel):
         #for rowIndex in xrange(1,6):
         for columnIndex in xrange (1, (globalNumberOfPages+1)):
             #here we are inserting the first value of the row
-            self.listControlFinalDataTable.SetStringItem(0, columnIndex, str(globalA0Array[self.trickyIndex]))
-            self.listControlFinalDataTable.SetStringItem(1, columnIndex, str(globalA1Array[self.trickyIndex]))
-            self.listControlFinalDataTable.SetStringItem(2, columnIndex, str(globalA2Array[self.trickyIndex]))
-            self.listControlFinalDataTable.SetStringItem(3, columnIndex, str(globalTeffArray[self.trickyIndex]))
+            self.listControlFinalDataTable.SetStringItem(0, columnIndex, "%.2f" % globalA0Array[self.trickyIndex]+'+/-'+str("%.2f" % globalA0ErrorArray[self.trickyIndex]))
+            self.listControlFinalDataTable.SetStringItem(1, columnIndex, "%.2f" % globalA1Array[self.trickyIndex]+'+/-'+str("%.2f" % globalA1ErrorArray[self.trickyIndex]))
+            self.listControlFinalDataTable.SetStringItem(2, columnIndex, "%.2f" % globalA2Array[self.trickyIndex]+'+/-'+str("%.2f" % globalA2ErrorArray[self.trickyIndex]))
+            self.listControlFinalDataTable.SetStringItem(3, columnIndex, "%.2f" % globalTeffArray[self.trickyIndex])
             self.trickyIndex = self.trickyIndex + 1
                 #self.list_ctrl.SetStringItem(rowIndex, 2, "USA")
-        self.listControlFinalDataTable.SetStringItem(4, 1, str(self.TeffFinal))
+        self.listControlFinalDataTable.SetStringItem(4, 1, str("%.2f" % self.TeffFinal))
         #putting table in the sizer
         self.tableSizer.Add(self.listControlFinalDataTable, 1, wx.ALL)
         #---------------------------------------------------------------------#
@@ -1347,10 +1507,28 @@ class CombinedInfoPanel(wx.Panel):
         self.resultSizer.Add(self.graphSizer, 1, wx.ALL)
         self.resultSizer.Add(self.tableSizer, 1, wx.ALL)
         #self.resultSizer.Add(self.listControlFinalDataTable, 1, wx.ALL)
+        #self.resultSizer.Add(self.saveButton, 1, wx.ALL)
         
         self.SetSizer(self.resultSizer)
         
-
+        
+    #-------------------------------------------------------------------------#
+    ''' Method for saving final table as .png file '''
+    def onSaveFile(self, event):
+        """
+        Create and show the Save FileDialog
+        """
+        dlg = wx.FileDialog(
+            self, message="Save file as ...", 
+            defaultDir=self.currentDirectory, 
+            defaultFile="", 
+            wildcard="PNG files (*.png)|*.png|TIFF files (*.tif)|*.tif|BMP (*.bmp)|*.bmp|GIF files (*.gif)|*.gif", 
+            style=wx.FD_SAVE
+            )
+        if dlg.ShowModal() == wx.ID_OK:
+            path = dlg.GetPath()
+            print "You chose the following filename: %s" % path
+        dlg.Destroy()
         #print globalNumberOfPages
         # retrieving the names of pages
         #global globalPageName
@@ -1399,7 +1577,7 @@ class MainFrame(wx.Frame):
         screenWidth = screenSize[0]/1.1
         screenHeight = screenSize[1]/1.1
         
-        wx.Frame.__init__(self, None, wx.ID_ANY, "SolarLimb_v0.2.7", size = (screenWidth, screenHeight))
+        wx.Frame.__init__(self, None, wx.ID_ANY, "SolarLimb", size = (screenWidth, screenHeight))
         # defining a global variablbe, which is the identifier of the tab
         #self.tab_num = 0
         self.tabIndex = 1
@@ -1429,34 +1607,43 @@ class MainFrame(wx.Frame):
         #---------------------------------------------------------------------#
         # identifying global variables to plot the resulting graph
         global globalIlArray
-        globalIlArray = [0 for col in range(7)]
+        globalIlArray = [0 for col in range(100)]
         #globalIlArray[self.f] = self.Il
         #print ("globalIlArray ", globalIlArray)
         
         global globalTeffArray
-        globalTeffArray = [0 for col in range(7)]
-        #globalTeffArray[self.f] = self.Teff
+        globalTeffArray = [0 for col in range(100)]
+        # array of errors for temperatures
+        global globalTeffErrorArray
+        globalTeffErrorArray = [0 for col in range(100)]
         
         global globalTtaulArray
-        globalTtaulArray = [0 for col in range(7)]
+        globalTtaulArray = [0 for col in range(100)]
         
         #array of distance parameters
         global globalmiukArray
-        globalmiukArray = [0 for col in range(7)]
+        globalmiukArray = [0 for col in range(100)]
         global globalmiuk1Array
-        globalmiuk1Array = [0 for col in range(7)]
+        globalmiuk1Array = [0 for col in range(100)]
         
         # for graphics
         global globalPolyvalArray
-        globalPolyvalArray = [0 for col in range(7)]
+        globalPolyvalArray = [0 for col in range(100)]
         
         #for coeeficients a0, a1 and a2
         global globalA0Array
-        globalA0Array = [0 for col in range(7)]
+        globalA0Array = [0 for col in range(100)]
         global globalA1Array
-        globalA1Array = [0 for col in range(7)]
+        globalA1Array = [0 for col in range(100)]
         global globalA2Array
-        globalA2Array = [0 for col in range(7)]
+        globalA2Array = [0 for col in range(100)]
+        #initialising an array for errors of coefficients
+        global globalA0ErrorArray
+        globalA0ErrorArray = [0 for col in range(100)]
+        global globalA1ErrorArray
+        globalA1ErrorArray = [0 for col in range(100)]
+        global globalA2ErrorArray
+        globalA2ErrorArray = [0 for col in range(100)]
         #self.testList = []
         
     ''' defining a menu bar method '''
@@ -1468,7 +1655,7 @@ class MainFrame(wx.Frame):
         #fileMenu.Append(102, "Save", "Save")
         addTab = fileMenu.Append(103, "Add", "Add")
         combinedData = fileMenu.Append(104, "Combine","Combine")
-        fileMenu.Append(wx.ID_ABOUT, "About","About")
+        aboutTheProgram = fileMenu.Append(wx.ID_ABOUT, "About","About")
         quitTheApp = fileMenu.Append(wx.ID_EXIT,"Exit","Close")
         
         # Creating the menubar.
@@ -1482,6 +1669,8 @@ class MainFrame(wx.Frame):
         self.Bind(wx.EVT_MENU, self.GetName, addTab)
         
         self.Bind(wx.EVT_MENU, self.CombinedData, combinedData)
+        # adding the event handling for the about variable
+        self.Bind(wx.EVT_MENU, self.AboutTheProgram, aboutTheProgram)
         # adding an eventhandling to the quitTheApp variable
         self.Bind(wx.EVT_MENU, self.OnQuit, quitTheApp)
 
@@ -1603,6 +1792,12 @@ class MainFrame(wx.Frame):
         if globalNumberOfPages > 0:
             combinedInfoFrame = CombinedInfoFrame()
             combinedInfoFrame.Show()
+    
+    ''' Method for about button from the Menu '''
+    def AboutTheProgram(self, event):
+        aboutFrame = AboutFrame()
+        aboutFrame.Show()
+        
             
 #----------------------------------------------------------------------
 # Run the program
