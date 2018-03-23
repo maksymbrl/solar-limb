@@ -132,6 +132,7 @@ In the whole discussion we refer to relative intensities. In particular all the 
 | V | 547 | $(3,6 \pm 0,2) \times 10^{13}$ |
 | R | 648 | $(2,8 \pm 0,3) \times 10^{13}$ |
 | I | 871 | $(1,6 \pm 0,5) \times 10^{13}$ |
+
 Interpolated physical central intensities $I_\lambda(0,1)$ for different wavelengths $\lambda$ using the tabulated values from \cite{Bohm}.
 
 Till now, we described the relative intensity and the source function using a second order fit. It is exactly the right time to apply the Eddington approximation, which is a set of assumptions for radiative transfer (which was described in theoretical part). In particular, that atmosphere is gray, is in thermal radiative equilibrium and that geometry of the atmosphere is plane-parallel. Together with an additional hypothesis that the intensity is a linear function of $\mu$. Applying all of these we can directly equalize the source function and Blackbody Planck function of the temperature at the same optical depth. So, the effective temperature $T_{eff}$ is equal to the real temperature $T(\tau)$ for $\tau=2/3$. .
@@ -144,6 +145,7 @@ In figure \rf{fig:Temperature_miu} we show the temperature as a function of the 
 | B | 6044.66 $\pm$ 34.01 | 6298.42 $\pm$ 74.26 |
 | V | 6218.47 $\pm$ 90.12 | 6071.16 $\pm$ 90.13 |
 | R | 5769.23 $\pm$ 157.01 | 5934.25 $\pm$ 157.00 | 
+
 Effective temperature for the filters we used for two different power supplies (adapters). The voltages of the new and old adapters are $V_{new} = 20,07V$ and $V_{old} = 12,57V$, respectively.
 
 Then we extrapolated the temperatures for $\tau=2/3$ for each filter and found a values for the effective temperatures: we list them in the table \ref{table:Teff}. We applied the uncertainty propagation theory for calculation of the associated errors on the wavelength errors $\delta\lambda=FWHM/2$ (the FWHM of the filter transparency profile), the central intensities $\delta I_\lambda$ and the fit coefficients $\delta a_i$ ($i=0,1,2$).
