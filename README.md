@@ -7,10 +7,9 @@
 - [Theory](#theory)
 - [Program](#program)
 - [Data analysis](#data-analysis)
+- [Results](#results)
 - [Program](#program)
 - [Examples](#examples)
-
-
 
 ## Theory
 
@@ -65,6 +64,106 @@ T(\tau_\lambda)=\frac{hc}{k\lambda}\frac{1}{\log\left(1+\frac{2hc^2}{\lambda^5S_
 \ee
 
 ## Data analysis
+
+To describe the distance from the center of the Sun, we use the distance parameter $\mu$:
+
+\be{30}
+\mu=\cos\theta=\sqrt{1-\left(\frac{r}{R}\right)^2}
+\ee
+where $\theta$ is the heliocentric angle, $R$ is the Sun's radius and $r$ is the current distance to the center of the disk. It is seen that distance parameter decreases with an increasing radius (being maximum in the center). 
+
+For each single snapshot, we divide the Sun for 9 concentric rings with the center in the solar center. Every region has $N\approx 100$ points. We number the regions with the symbol $k$. The $k$-th region has a number $N_k$ of pixels and extends from the minimum distance (from the center) $r_k^{in}$ to the maximum $r_k^{out}$. The mean distance $r_k$ from the center and its associated error $\delta r_k$ (similar to the average and the semi dispersion on $r_k^{in}$ and $r_k^{out}$) are defined as:
+
+\be{31}
+r_k=\frac{r_k^{in}+r_k^{out}}{2}, \quad \delta r_k=\frac{r_k^{in}-r_k^{out}}{2}\, .
+\ee
+
+To get more information from our data, we firstly find an intensity of each pixel $I_k^n$ in the $k$-th region and then get an average intensity $I_k$ in this ring. as error we take the standard deviation over the $I_k^n$. We also define the distance parameter $\mu_k$ of the $k$-th region 
+
+\be{32}
+I_k=\frac{1}{N_k}\sum_{n=1}^{N_k}I_k^n\pm\Delta_k I_k, \quad \mu_k=\sqrt{1-\left(\frac{r_k}{R}\right)^2}\pm\frac{r_k}{\sqrt{1-\left(\frac{r_k}{R}\right)^2}}\delta r_k\, .
+\ee
+
+Note that $\delta\mu_k$ is not a measure error, but depends on the way in which we define the regions on the diameter.
+
+~
+During our observations we have collected 20 snapshots of the Sun for 4 positions of the filter wheel (see details in section \rf{sec:instrumentation}). In order to analyze them, we developed an algorithm in the Python environment. The program goes filter by filter, repeated over all 20 snapshots (collected in our experiment) and finds the coordinates of the center, as well as four recognizable points as (Left, Right, Top and Bottom of the solar snapshot, from the point of view of our CCD camera, see left figures \rf{fig:filters}), defines the regions on the diameters and calculates all the quantities from above. At last, the final intensity $I_k^{FIN}$ and the distance parameters $\mu_k^{FIN}$ are obtained (for the given filter) through the weighted average over all twenty images.
+
+Referring to the central intensity $I_\lambda\left(0, 1\right)$ and restricting ourselves to a second order polynomial fit, we can write
+
+\be{33}
+\frac{I_\lambda(0,\mu)}{I_\lambda(0,1)}=a_0+a_1\mu+2a_2\mu^2, \quad \frac{S_\lambda(\tau_\lambda)}{I_\lambda(0,1)}=a_0+a_1\tau+a_2\tau_\lambda^2\, ,
+\ee
+
+~
+In order to avoid non-physical behaviors, we limit ourselves with the second order expansion (as it was done in \cite{Zuliani}). We are interested in relative intensities $I_\lambda(0, \mu)/I_\lambda(0, 1)$ and the least square polynomial fit allows us to find the fit coefficients ($a_0$, $a_1$ and $a_2$).
+
+~
+We plot the relative intensities $I_\lambda(0, \mu)/I_\lambda(0, 1)$ in the figure \rf{fig:int_miu} referring with the different symbols to the various filters' measures. For the fit, we reject the data relative to the four most internal regions (nearest to the center) because they are more affected by the blooming effect (called ghost effect by \cite{Zuliani}), as explained before. The determined coefficients are listed in tables \ref{table:fit_old} and \rf{table:fit_new}.
+
+## Results
+
+| Band | a_0 | a_1 | a_2 | R^2 test |
+| :---: | :---: | :---: | :---: | :---: | 
+| B | 0.58 $\pm$ 0.09 | 0.50 $\pm$ 0.33 | -0.04 $\pm$ 0.14 | $0.98$ |
+| V | -0.04 $\pm$ 0.07 | 1.58 $\pm$ 0.26 | -0.27 $\pm$ 0.11 | $1.00$ | 
+| R | 0.29 $\pm$ 0.07 | 0.98 $\pm$ 0.24 | -0.15 $\pm$ 0.10 | $1.00$ |
+Second order fit coefficients and R-square test for \textit{old} power supply
+
+
+| Band | a_0 | a_1 | a_2 | R^2 test |
+| :---: | :---: | :---: | :---: | :---: |
+| B | 0.86 $\pm$ 0.16 | 0.31 $\pm$ 0.6 | -0.16 $\pm$ 0.5 | $0.99$ |
+| V | -0.16 $\pm$ 0.03 | 2.07 $\pm$ 0.11 | -0.51 $\pm$ 0.04 | $1.00$ | 
+| R | 0.48 $\pm$ 0.06 | 0.44 $\pm$ 0.21 | 0.07 $\pm$ 0.09 | $1.00$ |
+Second order fit coefficients and R-square test \textit{new} power supply
+                   
+In order to see how good the polynomial fit describes the dependence of solar intensity from the distance parameter we performed the R-square test (which indicates how the model explains the variability of the response data around its mean). In our case, the model is our polynomial fit. If R-square test is 0 then the model does not explain the variability of the data response, in contrast if R-square is 1, then all the variability is explained. In the table \ref{table:fit_old} we also showed R-square test for each polynomial fit. It is seen, that only one polynomial fit (for I-band filter) does not fit the data as well (the same applied for the data obtained with the \textit{new} power supply). The reason is because the dataset we are using for I-band is saturated at the sun center, which will also give us wrong estimates for the temperature (see figure \rf{fig:saturated_data}). Therefore, we excluded this filter from the analysis.
+
+\subsection{Physical central intensity}
+
+In the whole discussion we refer to relative intensities. In particular all the intensity values we treat are expressed in digital units and we usually normalize all the values relatively to the center of the disk. But, to obtain the source function we need physical central intensity $I_{\lambda}(0, 1)$ expressed in $Wm^{-3}sr^{-1}$ units. Following the reasoning of \cite{Zuliani}, we could not measure them, so we can use a set of tabulated intensities determined for some specific wavelengths (see table \ref{table:interpolatedIntensity}). 
+
+|Band | Wavelength (nm) | $I_{\lambda}(0,1)$ ($Wm^{-3}sr^{-1}$) | 
+| :---: | :---: | :---: |
+| B | 420 | $(4,5 \pm 0,6) \times 10^{13}$ |
+| V | 547 | $(3,6 \pm 0,2) \times 10^{13}$ |
+| R | 648 | $(2,8 \pm 0,3) \times 10^{13}$ |
+| I | 871 | $(1,6 \pm 0,5) \times 10^{13}$ |
+Interpolated physical central intensities $I_\lambda(0,1)$ for different wavelengths $\lambda$ using the tabulated values from \cite{Bohm}.
+
+Till now, we described the relative intensity and the source function using a second order fit. It is exactly the right time to apply the Eddington approximation, which is a set of assumptions for radiative transfer (which was described in theoretical part). In particular, that atmosphere is gray, is in thermal radiative equilibrium and that geometry of the atmosphere is plane-parallel. Together with an additional hypothesis that the intensity is a linear function of $\mu$. Applying all of these we can directly equalize the source function and Blackbody Planck function of the temperature at the same optical depth. So, the effective temperature $T_{eff}$ is equal to the real temperature $T(\tau)$ for $\tau=2/3$. .
+
+~
+In figure \rf{fig:Temperature_miu} we show the temperature as a function of the optical depth for each filter. To obtain these profiles, we used the source function calculated through the parameters of the polynomial fits and the interpolated central intensities putting then into equation \rf{6}.
+
+| Band | $T_{eff}$ K (New adapter) | $T_{eff}$ K  (Old adapter)  | 
+| :---: | :---: | :---: |
+| B | 6044.66 $\pm$ 34.01 | 6298.42 $\pm$ 74.26 |
+| V | 6218.47 $\pm$ 90.12 | 6071.16 $\pm$ 90.13 |
+| R | 5769.23 $\pm$ 157.01 | 5934.25 $\pm$ 157.00 | 
+Effective temperature for the filters we used for two different power supplies (adapters). The voltages of the new and old adapters are $V_{new} = 20,07V$ and $V_{old} = 12,57V$, respectively.
+
+Then we extrapolated the temperatures for $\tau=2/3$ for each filter and found a values for the effective temperatures: we list them in the table \ref{table:Teff}. We applied the uncertainty propagation theory for calculation of the associated errors on the wavelength errors $\delta\lambda=FWHM/2$ (the FWHM of the filter transparency profile), the central intensities $\delta I_\lambda$ and the fit coefficients $\delta a_i$ ($i=0,1,2$).
+
+In the end, we used a weighted mean for B,V and R (excluding I) band filters as
+\be{34}
+T_{eff}=\cfrac{\sum_i T_{eff}^{(i)}\sigma_i^{-2}}{\sum_i \sigma_i^{-2}}\, ,
+\ee
+together with associated uncertainties $\sigma_i$, supposing them being small, i.e., neglecting the higher orders of smallness (for example, $\sigma_i \sigma_j \ll \sigma_i$) 
+\be{35}
+\sigma_i=T_{eff} \left[ \sum_i\left(\cfrac{\sigma_i}{T_{eff}^{(i)}}\right)^2 \right]^{-1/2}\, ,
+\ee
+to obtain the final effective temperature
+\be{36}
+T_{eff}=T\left(\tau=\frac{2}{3}\right)\, .
+\ee
+and the averaged values with the associated errors for the new and the old adapters, respectively, are:
+\be{37}
+T_{eff}=\left(6055\pm 189\right)K \, \quad \text{and}\, \quad T_{eff}=\left(6175 \pm 201\right)K\, ,
+\ee
+
+One of the main reasons we got the exceeding value is that we excluded the data from one filter due to saturation discussed above, and another reason is because of the \textit{threshold} we have chosen (this specific feature of the program is discussed in subsection \rf{subsec:gui_application}).
 
 ## Program
 
