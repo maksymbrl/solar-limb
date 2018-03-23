@@ -104,10 +104,11 @@ We plot the relative intensities $I_\lambda(0, \mu)/I_\lambda(0, 1)$ in the figu
 ## Results
 
 | Band | a_0 | a_1 | a_2 | R^2 test |
-| :---: | :-------------: | :-----------: | :-----------: | :------------: | 
+| :---: | :---: | :---: | :---: | :---: | 
 | B | 0.58 $\pm$ 0.09 | 0.50 $\pm$ 0.33 | -0.04 $\pm$ 0.14 | $0.98$ |
 | V | -0.04 $\pm$ 0.07 | 1.58 $\pm$ 0.26 | -0.27 $\pm$ 0.11 | $1.00$ | 
 | R | 0.29 $\pm$ 0.07 | 0.98 $\pm$ 0.24 | -0.15 $\pm$ 0.10 | $1.00$ |
+
 Second order fit coefficients and R-square test for \textit{old} power supply
 
 
@@ -116,6 +117,7 @@ Second order fit coefficients and R-square test for \textit{old} power supply
 | B | 0.86 $\pm$ 0.16 | 0.31 $\pm$ 0.6 | -0.16 $\pm$ 0.5 | $0.99$ |
 | V | -0.16 $\pm$ 0.03 | 2.07 $\pm$ 0.11 | -0.51 $\pm$ 0.04 | $1.00$ | 
 | R | 0.48 $\pm$ 0.06 | 0.44 $\pm$ 0.21 | 0.07 $\pm$ 0.09 | $1.00$ |
+
 Second order fit coefficients and R-square test \textit{new} power supply
                    
 In order to see how good the polynomial fit describes the dependence of solar intensity from the distance parameter we performed the R-square test (which indicates how the model explains the variability of the response data around its mean). In our case, the model is our polynomial fit. If R-square test is 0 then the model does not explain the variability of the data response, in contrast if R-square is 1, then all the variability is explained. In the table \ref{table:fit_old} we also showed R-square test for each polynomial fit. It is seen, that only one polynomial fit (for I-band filter) does not fit the data as well (the same applied for the data obtained with the \textit{new} power supply). The reason is because the dataset we are using for I-band is saturated at the sun center, which will also give us wrong estimates for the temperature (see figure \rf{fig:saturated_data}). Therefore, we excluded this filter from the analysis.
