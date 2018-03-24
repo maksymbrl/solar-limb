@@ -5,7 +5,6 @@
 ## Table of Contents
 
 - [Theory](#theory)
-- [Program](#program)
 - [Data analysis](#data-analysis)
 - [Program](#program)
 - [Examples](#examples)
