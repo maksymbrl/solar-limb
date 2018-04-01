@@ -32,15 +32,15 @@ and the source function is the product of power series:
 
 ![equation](http://latex.codecogs.com/gif.latex?S_\lambda=I_\lambda\left(0,1\right)\sum_{n=0}^m&space;a_{\lambda&space;n}\tau_\lambda^n,&space;\quad&space;I_\lambda(0,&space;\mu)=I_\lambda(0,&space;1)=\sum_{n=0}^m&space;a_{\lambda&space;n}n!\mu^n,&space;\quad&space;\quad&space;\quad&space;(3))
 
-Assuming Eddington approximation with the local thermodynamic equilibrium, from \rf{15} we get
+Assuming Eddington approximation with the local thermodynamic equilibrium, we get
 
 ![equation](http://latex.codecogs.com/gif.latex?T^4(\tau)=\frac{3}{4}T_{eff}^4\left(\tau&plus;\frac{2}{3}\right),&space;\quad&space;\quad&space;\quad&space;(4))
 
-Since photosphere is defined as the layer on which effective temperature $T_{eff}$ is equivalent to real temperature $T$, from \rf{4} we get
+Since photosphere is defined as the layer on which effective temperature ![equation](http://latex.codecogs.com/gif.latex?T_{eff}) is equivalent to real temperature T, we get
 
 ![equation](http://latex.codecogs.com/gif.latex?T_{eff}^{phot}=T\left(\tau=2/3\right),&space;\quad&space;\quad&space;\quad&space;(5))
 
-Starting from the Planck's law expressed in terms of wavelength $\lambda$
+Starting from the Planck's law expressed in terms of wavelength ![equation](http://latex.codecogs.com/gif.latex?\lambda)
 
 ![equation](http://latex.codecogs.com/gif.latex?B_\lambda(\lambda,&space;T)=\frac{2hc^2}{\lambda^5}&space;\frac{1}{e^{\frac{hc}{\lambda&space;k_B&space;T}}&space;-1},&space;\quad&space;\quad&space;\quad&space;(6))
 
@@ -56,20 +56,19 @@ we get
 
 ![equation](http://latex.codecogs.com/gif.latex?r_k=\frac{r_k^{in}&plus;r_k^{out}}{2},&space;\quad&space;\delta&space;r_k=\frac{r_k^{in}-r_k^{out}}{2}&space;,&space;\quad&space;\quad&space;\quad&space;(8))
 
-- We firstly find an intensity of each pixel $I_k^n$ in the $k$-th region and then get an average intensity $I_k$ in this ring. As error we take the standard deviation over the $I_k^n$. We also define the distance parameter $\mu_k$ of the $k$-th region 
+- We firstly find an intensity of each pixel ![equation](http://latex.codecogs.com/gif.latex?I_k^n) in the k-th region and then get an average intensity ![equation](http://latex.codecogs.com/gif.latex?I_k) in this ring. As error we take the standard deviation over the ![equation](http://latex.codecogs.com/gif.latex?I_k^n). We also define the distance parameter ![equation](http://latex.codecogs.com/gif.latex?\mu_k) of the k-th region 
 
 ![equation](http://latex.codecogs.com/gif.latex?I_k=\frac{1}{N_k}\sum_{n=1}^{N_k}I_k^n\pm\Delta_k&space;I_k,&space;\quad&space;\mu_k=\sqrt{1-\left(\frac{r_k}{R}\right)^2}\pm\frac{r_k}{\sqrt{1-\left(\frac{r_k}{R}\right)^2}}\delta&space;r_k,&space;\quad&space;\quad&space;\quad&space;(9))
 
-Note that $\delta\mu_k$ is not a measure error, but depends on the way in which we define the regions on the diameter.
+Note that ![equation](http://latex.codecogs.com/gif.latex?\delta\mu_k) is not a measure error, but depends on the way in which we define the regions on the diameter.
 
-- Referring to the central intensity $I_\lambda\left(0, 1\right)$ and restricting ourselves to a second order polynomial fit, we can write
+- Referring to the central intensity ![equation](http://latex.codecogs.com/gif.latex?I_\lambda\left(0,&space;1\right)) and restricting ourselves to a second order polynomial fit, we can write
 
 ![equation](http://latex.codecogs.com/gif.latex?\frac{I_\lambda(0,\mu)}{I_\lambda(0,1)}=a_0&plus;a_1\mu&plus;2a_2\mu^2,&space;\quad&space;\frac{S_\lambda(\tau_\lambda)}{I_\lambda(0,1)}=a_0&plus;a_1\tau&plus;a_2\tau_\lambda^2,&space;\quad&space;\quad&space;\quad&space;(10))
 
-- In order to avoid non-physical behaviors, we limit ourselves with the second order expansion. We are interested in relative intensities $I_\lambda(0, \mu)/I_\lambda(0, 1)$ and the least square polynomial fit allows us to find the fit coefficients ($a_0$, $a_1$ and $a_2$).
-- We plot the relative intensities $I_\lambda(0, \mu)/I_\lambda(0, 1)$ in the figure \rf{fig:int_miu} referring with the different symbols to the various filters' measures.
+- In order to avoid non-physical behaviors, we limit ourselves with the second order expansion. We are interested in relative intensities ![equation](http://latex.codecogs.com/gif.latex?I_\lambda(0,&space;\mu)/I_\lambda(0,&space;1)) and the least square polynomial fit allows us to find the fit coefficients (![equation](http://latex.codecogs.com/gif.latex?a_0,&space;\quad&space;a_1&space;\quad&space;and&space;\quad&space;a_2)).
 
-In the whole discussion we refer to relative intensities. In particular all the intensity values we treat are expressed in digital units and we usually normalize all the values relatively to the center of the disk. But, to obtain the source function we need physical central intensity $I_{\lambda}(0, 1)$ expressed in $Wm^{-3}sr^{-1}$ units.
+In the whole discussion we refer to relative intensities. In particular all the intensity values we treat are expressed in digital units and we usually normalize all the values relatively to the center of the disk. But, to obtain the source function we need physical central intensity ![equation](http://latex.codecogs.com/gif.latex?I_{\lambda}(0,&space;1)) expressed in ![equation](http://latex.codecogs.com/gif.latex?Wm^{-3}sr^{-1}) units.
 
 |Band | Wavelength (nm) | ![equation](http://latex.codecogs.com/gif.latex?I_{\lambda}(0,1)) (![equation](http://latex.codecogs.com/gif.latex?Wm^{-3}sr^{-1})) | 
 | :---: | :---: | :---: |
