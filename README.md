@@ -54,9 +54,7 @@ we get
 - The  $k$-th region extends from the minimum distance (from the center) $r_k^{in}$ to the maximum $r_k^{out}$. 
 - The mean distance $r_k$ from the center and its associated error $\delta r_k$ are defined as:
 
-\be{31}
-r_k=\frac{r_k^{in}+r_k^{out}}{2}, \quad \delta r_k=\frac{r_k^{in}-r_k^{out}}{2}\, .
-\ee
+![equation](http://latex.codecogs.com/gif.latex?r_k=\frac{r_k^{in}&plus;r_k^{out}}{2},&space;\quad&space;\delta&space;r_k=\frac{r_k^{in}-r_k^{out}}{2}&space;,&space;\quad&space;\quad&space;\quad&space;(8))
 
 To describe the distance from the center of the Sun, we use the distance parameter $\mu$:
 
@@ -64,12 +62,6 @@ To describe the distance from the center of the Sun, we use the distance paramet
 \mu=\cos\theta=\sqrt{1-\left(\frac{r}{R}\right)^2}
 \ee
 where $\theta$ is the heliocentric angle, $R$ is the Sun's radius and $r$ is the current distance to the center of the disk. It is seen that distance parameter decreases with an increasing radius (being maximum in the center). 
-
-For each single snapshot, we divide the Sun for 9 concentric rings with the center in the solar center. Every region has $N\approx 100$ points. We number the regions with the symbol $k$. The $k$-th region has a number $N_k$ of pixels and extends from the minimum distance (from the center) $r_k^{in}$ to the maximum $r_k^{out}$. The mean distance $r_k$ from the center and its associated error $\delta r_k$ (similar to the average and the semi dispersion on $r_k^{in}$ and $r_k^{out}$) are defined as:
-
-\be{31}
-r_k=\frac{r_k^{in}+r_k^{out}}{2}, \quad \delta r_k=\frac{r_k^{in}-r_k^{out}}{2}\, .
-\ee
 
 To get more information from our data, we firstly find an intensity of each pixel $I_k^n$ in the $k$-th region and then get an average intensity $I_k$ in this ring. as error we take the standard deviation over the $I_k^n$. We also define the distance parameter $\mu_k$ of the $k$-th region 
 
