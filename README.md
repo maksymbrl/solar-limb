@@ -26,9 +26,7 @@ is tedious task. Luckily, some simplifications can be made in study of stellar a
 
 Thus, we have:
 
-\be{14}
-I^{(1)}_\lambda = B_\lambda -\frac{\cos\theta}{\kappa_\lambda}\frac{\partial B_\lambda}{\partial z} \, ,
-\ee
+![eqution](http://latex.codecogs.com/gif.latex?I^{(1)}_\lambda&space;=&space;B_\lambda&space;-\frac{\cos\theta}{\kappa_\lambda}\frac{\partial&space;B_\lambda}{\partial&space;z}&space;,&space;\quad&space;\quad&space;\quad&space;(2))
 
 and the source function is the product of power series:
 
