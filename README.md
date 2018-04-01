@@ -50,6 +50,14 @@ we get
 
 ## Data analysis
 
+- We divide the Sun for 9 concentric rings with the center in the solar center and number each region with symbol $k$ (each region has $N\approx 100$ points). 
+- The  $k$-th region extends from the minimum distance (from the center) $r_k^{in}$ to the maximum $r_k^{out}$. 
+- The mean distance $r_k$ from the center and its associated error $\delta r_k$ are defined as:
+
+\be{31}
+r_k=\frac{r_k^{in}+r_k^{out}}{2}, \quad \delta r_k=\frac{r_k^{in}-r_k^{out}}{2}\, .
+\ee
+
 To describe the distance from the center of the Sun, we use the distance parameter $\mu$:
 
 \be{30}
@@ -71,9 +79,6 @@ I_k=\frac{1}{N_k}\sum_{n=1}^{N_k}I_k^n\pm\Delta_k I_k, \quad \mu_k=\sqrt{1-\left
 
 Note that $\delta\mu_k$ is not a measure error, but depends on the way in which we define the regions on the diameter.
 
-~
-During our observations we have collected 20 snapshots of the Sun for 4 positions of the filter wheel (see details in section \rf{sec:instrumentation}). In order to analyze them, we developed an algorithm in the Python environment. The program goes filter by filter, repeated over all 20 snapshots (collected in our experiment) and finds the coordinates of the center, as well as four recognizable points as (Left, Right, Top and Bottom of the solar snapshot, from the point of view of our CCD camera, see left figures \rf{fig:filters}), defines the regions on the diameters and calculates all the quantities from above. At last, the final intensity $I_k^{FIN}$ and the distance parameters $\mu_k^{FIN}$ are obtained (for the given filter) through the weighted average over all twenty images.
-
 Referring to the central intensity $I_\lambda\left(0, 1\right)$ and restricting ourselves to a second order polynomial fit, we can write
 
 \be{33}
@@ -81,7 +86,7 @@ Referring to the central intensity $I_\lambda\left(0, 1\right)$ and restricting 
 \ee
 
 ~
-In order to avoid non-physical behaviors, we limit ourselves with the second order expansion (as it was done in \cite{Zuliani}). We are interested in relative intensities $I_\lambda(0, \mu)/I_\lambda(0, 1)$ and the least square polynomial fit allows us to find the fit coefficients ($a_0$, $a_1$ and $a_2$).
+In order to avoid non-physical behaviors, we limit ourselves with the second order expansion. We are interested in relative intensities $I_\lambda(0, \mu)/I_\lambda(0, 1)$ and the least square polynomial fit allows us to find the fit coefficients ($a_0$, $a_1$ and $a_2$).
 
 ~
 We plot the relative intensities $I_\lambda(0, \mu)/I_\lambda(0, 1)$ in the figure \rf{fig:int_miu} referring with the different symbols to the various filters' measures.
