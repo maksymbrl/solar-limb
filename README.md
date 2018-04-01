@@ -56,20 +56,20 @@ we get
 
 ![equation](http://latex.codecogs.com/gif.latex?r_k=\frac{r_k^{in}&plus;r_k^{out}}{2},&space;\quad&space;\delta&space;r_k=\frac{r_k^{in}-r_k^{out}}{2}&space;,&space;\quad&space;\quad&space;\quad&space;(8))
 
-To get more information from our data, we firstly find an intensity of each pixel $I_k^n$ in the $k$-th region and then get an average intensity $I_k$ in this ring. as error we take the standard deviation over the $I_k^n$. We also define the distance parameter $\mu_k$ of the $k$-th region 
+- We firstly find an intensity of each pixel $I_k^n$ in the $k$-th region and then get an average intensity $I_k$ in this ring. As error we take the standard deviation over the $I_k^n$. We also define the distance parameter $\mu_k$ of the $k$-th region 
 
 ![equation](http://latex.codecogs.com/gif.latex?I_k=\frac{1}{N_k}\sum_{n=1}^{N_k}I_k^n\pm\Delta_k&space;I_k,&space;\quad&space;\mu_k=\sqrt{1-\left(\frac{r_k}{R}\right)^2}\pm\frac{r_k}{\sqrt{1-\left(\frac{r_k}{R}\right)^2}}\delta&space;r_k,&space;\quad&space;\quad&space;\quad&space;(9))
 
 Note that $\delta\mu_k$ is not a measure error, but depends on the way in which we define the regions on the diameter.
 
-Referring to the central intensity $I_\lambda\left(0, 1\right)$ and restricting ourselves to a second order polynomial fit, we can write
+- Referring to the central intensity $I_\lambda\left(0, 1\right)$ and restricting ourselves to a second order polynomial fit, we can write
 
 ![equation](http://latex.codecogs.com/gif.latex?\frac{I_\lambda(0,\mu)}{I_\lambda(0,1)}=a_0&plus;a_1\mu&plus;2a_2\mu^2,&space;\quad&space;\frac{S_\lambda(\tau_\lambda)}{I_\lambda(0,1)}=a_0&plus;a_1\tau&plus;a_2\tau_\lambda^2,&space;\quad&space;\quad&space;\quad&space;(10))
 
 - In order to avoid non-physical behaviors, we limit ourselves with the second order expansion. We are interested in relative intensities $I_\lambda(0, \mu)/I_\lambda(0, 1)$ and the least square polynomial fit allows us to find the fit coefficients ($a_0$, $a_1$ and $a_2$).
 - We plot the relative intensities $I_\lambda(0, \mu)/I_\lambda(0, 1)$ in the figure \rf{fig:int_miu} referring with the different symbols to the various filters' measures.
 
-In the whole discussion we refer to relative intensities. In particular all the intensity values we treat are expressed in digital units and we usually normalize all the values relatively to the center of the disk. But, to obtain the source function we need physical central intensity $I_{\lambda}(0, 1)$ expressed in $Wm^{-3}sr^{-1}$ units. Following the reasoning of \cite{Zuliani}, we could not measure them, so we can use a set of tabulated intensities determined for some specific wavelengths (see table \ref{table:interpolatedIntensity}). 
+In the whole discussion we refer to relative intensities. In particular all the intensity values we treat are expressed in digital units and we usually normalize all the values relatively to the center of the disk. But, to obtain the source function we need physical central intensity $I_{\lambda}(0, 1)$ expressed in $Wm^{-3}sr^{-1}$ units.
 
 |Band | Wavelength (nm) | $I_{\lambda}(0,1)$ ($Wm^{-3}sr^{-1}$) | 
 | :---: | :---: | :---: |
@@ -78,20 +78,19 @@ In the whole discussion we refer to relative intensities. In particular all the 
 | R | 648 | $(2,8 \pm 0,3) \times 10^{13}$ |
 | I | 871 | $(1,6 \pm 0,5) \times 10^{13}$ |
 
-Then we extrapolated the temperatures for $\tau=2/3$ for each filter and found a values for the effective temperatures: we list them in the table \ref{table:Teff}. We applied the uncertainty propagation theory for calculation of the associated errors on the wavelength errors $\delta\lambda=FWHM/2$ (the FWHM of the filter transparency profile), the central intensities $\delta I_\lambda$ and the fit coefficients $\delta a_i$ ($i=0,1,2$).
+- Then we extrapolated the temperatures for $\tau=2/3$ for each filter and found a values for the effective temperatures. 
+- We applied the uncertainty propagation theory for calculation of the associated errors on the wavelength errors $\delta\lambda=FWHM/2$ (the FWHM of the filter transparency profile), the central intensities $\delta I_\lambda$ and the fit coefficients $\delta a_i$ ($i=0,1,2$).
+- In the end, we used a weighted mean for B,V and R (excluding I) band filters as
 
-In the end, we used a weighted mean for B,V and R (excluding I) band filters as
-\be{34}
-T_{eff}=\cfrac{\sum_i T_{eff}^{(i)}\sigma_i^{-2}}{\sum_i \sigma_i^{-2}}\, ,
-\ee
-together with associated uncertainties $\sigma_i$, supposing them being small, i.e., neglecting the higher orders of smallness (for example, $\sigma_i \sigma_j \ll \sigma_i$) 
-\be{35}
-\sigma_i=T_{eff} \left[ \sum_i\left(\cfrac{\sigma_i}{T_{eff}^{(i)}}\right)^2 \right]^{-1/2}\, ,
-\ee
+![equation](http://latex.codecogs.com/gif.latex?T_{eff}=\cfrac{\sum_i&space;T_{eff}^{(i)}\sigma_i^{-2}}{\sum_i&space;\sigma_i^{-2}},&space;\quad&space;\quad&space;\quad&space;(11))
+
+together with associated uncertainties $\sigma_i$, supposing them being small, i.e., neglecting the higher orders of smallness (for example, $\sigma_i \sigma_j \ll \sigma_i$)
+
+![equation](http://latex.codecogs.com/gif.latex?\sigma_i=T_{eff}&space;\left[&space;\sum_i\left(\cfrac{\sigma_i}{T_{eff}^{(i)}}\right)^2&space;\right]^{-1/2},&space;\quad&space;\quad&space;\quad&space;(12))
+
 to obtain the final effective temperature
-\be{36}
-T_{eff}=T\left(\tau=\frac{2}{3}\right)\, .
-\ee
+
+![equation](http://latex.codecogs.com/gif.latex?T_{eff}=T\left(\tau=\frac{2}{3}\right),&space;\quad&space;\quad&space;\quad&space;(13))
 
 ## Program
 
