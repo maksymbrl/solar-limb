@@ -77,13 +77,13 @@ In the whole discussion we refer to relative intensities. In particular all the 
 | R | 648 | ![equation](http://latex.codecogs.com/gif.latex?(2,8&space;\pm&space;0,3)&space;\times&space;10^{13}) |
 | I | 871 | ![equation](http://latex.codecogs.com/gif.latex?(1,6&space;\pm&space;0,5)&space;\times&space;10^{13}) |
 
-- Then we extrapolated the temperatures for $\tau=2/3$ for each filter and found a values for the effective temperatures. 
-- We applied the uncertainty propagation theory for calculation of the associated errors on the wavelength errors $\delta\lambda=FWHM/2$ (the FWHM of the filter transparency profile), the central intensities $\delta I_\lambda$ and the fit coefficients $\delta a_i$ ($i=0,1,2$).
+- Then we extrapolated the temperatures for ![equation](http://latex.codecogs.com/gif.latex?\tau=2/3) for each filter and found a values for the effective temperatures. 
+- We applied the uncertainty propagation theory for calculation of the associated errors on the wavelength errors ![equation](http://latex.codecogs.com/gif.latex?\delta\lambda=FWHM/2) (the FWHM of the filter transparency profile), the central intensities ![equation](http://latex.codecogs.com/gif.latex?\delta&space;I_\lambda) and the fit coefficients ![equation](http://latex.codecogs.com/gif.latex?\delta&space;a_i,&space;\quad&space;(i=0,1,2)).
 - In the end, we used a weighted mean for various band filters as
 
 ![equation](http://latex.codecogs.com/gif.latex?T_{eff}=\cfrac{\sum_i&space;T_{eff}^{(i)}\sigma_i^{-2}}{\sum_i&space;\sigma_i^{-2}},&space;\quad&space;\quad&space;\quad&space;(11))
 
-together with associated uncertainties $\sigma_i$, supposing them being small, i.e., neglecting the higher orders of smallness
+together with associated uncertainties ![equation](http://latex.codecogs.com/gif.latex?\sigma_i), supposing them being small, i.e., neglecting the higher orders of smallness
 
 ![equation](http://latex.codecogs.com/gif.latex?\sigma_i=T_{eff}&space;\left[&space;\sum_i\left(\cfrac{\sigma_i}{T_{eff}^{(i)}}\right)^2&space;\right]^{-1/2},&space;\quad&space;\quad&space;\quad&space;(12))
 
