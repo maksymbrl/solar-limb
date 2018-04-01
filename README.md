@@ -30,33 +30,23 @@ Thus, we have:
 
 and the source function is the product of power series:
 
-\be{15}
-S_\lambda=I_\lambda\left(0,1\right)\sum_{n=0}^m a_{\lambda n}\tau_\lambda^n, \quad I_\lambda(0, \mu)=I_\lambda(0, 1)=\sum_{n=0}^m a_{\lambda n}n!\mu^n\, ,
-\ee
+![equation](http://latex.codecogs.com/gif.latex?S_\lambda=I_\lambda\left(0,1\right)\sum_{n=0}^m&space;a_{\lambda&space;n}\tau_\lambda^n,&space;\quad&space;I_\lambda(0,&space;\mu)=I_\lambda(0,&space;1)=\sum_{n=0}^m&space;a_{\lambda&space;n}n!\mu^n,&space;\quad&space;\quad&space;\quad&space;(3))
 
 Assuming Eddington approximation with the local thermodynamic equilibrium, from \rf{15} we get
 
-\be{18}
-T^4(\tau)=\frac{3}{4}T_{eff}^4\left(\tau+\frac{2}{3}\right)\, .
-\ee
+![equation](http://latex.codecogs.com/gif.latex?T^4(\tau)=\frac{3}{4}T_{eff}^4\left(\tau&plus;\frac{2}{3}\right),&space;\quad&space;\quad&space;\quad&space;(4))
 
 Since photosphere is defined as the layer on which effective temperature $T_{eff}$ is equivalent to real temperature $T$, from \rf{4} we get
 
-\be{19}
-T_{eff}^{phot}=T\left(\tau=2/3\right)\, .
-\ee
+![equation](http://latex.codecogs.com/gif.latex?T_{eff}^{phot}=T\left(\tau=2/3\right),&space;\quad&space;\quad&space;\quad&space;(5))
 
 Starting from the Planck's law expressed in terms of wavelength $\lambda$
 
-\be{20}
-B_\lambda(\lambda, T)=\frac{2hc^2}{\lambda^5} \frac{1}{e^{\frac{hc}{\lambda k_B T}} -1} \, ,
-\ee
+![equation](http://latex.codecogs.com/gif.latex?B_\lambda(\lambda,&space;T)=\frac{2hc^2}{\lambda^5}&space;\frac{1}{e^{\frac{hc}{\lambda&space;k_B&space;T}}&space;-1},&space;\quad&space;\quad&space;\quad&space;(6))
 
 we get
 
-\be{22}
-T(\tau_\lambda)=\frac{hc}{k\lambda}\frac{1}{\log\left(1+\frac{2hc^2}{\lambda^5S_\lambda(\tau_\lambda)}\right)} \, .
-\ee
+![equation](http://latex.codecogs.com/gif.latex?T(\tau_\lambda)=\frac{hc}{k\lambda}\frac{1}{\log\left(1&plus;\frac{2hc^2}{\lambda^5S_\lambda(\tau_\lambda)}\right)}&space;,&space;\quad&space;\quad&space;\quad&space;(7))
 
 ## Data analysis
 
