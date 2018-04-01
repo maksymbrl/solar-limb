@@ -11,7 +11,7 @@
 
 ## Theory
 
-> Here, I briefly state main concepts and equations used. For more complete description please refer to the [link]
+> Here, I briefly state main concepts and equations used. For more complete description please refer to the https://www.overleaf.com/read/ywczhyybtfgs
 
 In general, to solve radiative trasfer equation
 
