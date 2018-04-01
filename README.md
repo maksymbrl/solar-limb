@@ -50,9 +50,9 @@ we get
 
 ## Data analysis
 
-- We divide the Sun for 9 concentric rings with the center in the solar center and number each region with symbol $k$ (each region has $N\approx 100$ points). 
-- The  $k$-th region extends from the minimum distance (from the center) $r_k^{in}$ to the maximum $r_k^{out}$. 
-- The mean distance $r_k$ from the center and its associated error $\delta r_k$ are defined as:
+- We divide the Sun for 9 concentric rings with the center in the solar center and number each region with symbol k (each region has ![equation](http://latex.codecogs.com/gif.latex?N\approx&space;100) points). 
+- The  k-th region extends from the minimum distance (from the center) ![equation](http://latex.codecogs.com/gif.latex?r_k^{in}) to the maximum ![equation](http://latex.codecogs.com/gif.latex?r_k^{out}). 
+- The mean distance ![equation](http://latex.codecogs.com/gif.latex?r_k) from the center and its associated error ![equation](http://latex.codecogs.com/gif.latex?\delta&space;r_k) are defined as:
 
 ![equation](http://latex.codecogs.com/gif.latex?r_k=\frac{r_k^{in}&plus;r_k^{out}}{2},&space;\quad&space;\delta&space;r_k=\frac{r_k^{in}-r_k^{out}}{2}&space;,&space;\quad&space;\quad&space;\quad&space;(8))
 
