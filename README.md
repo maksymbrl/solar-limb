@@ -15,9 +15,8 @@
 
 In general, to solve radiative trasfer equation
 
-\be{7}
-\frac{dI_\lambda}{\kappa_\lambda ds}=\frac{dI_\lambda}{d\tau_{\lambda s}}=-I_\lambda + \frac{\epsilon_\lambda}{\kappa_\lambda}=-I_\lambda + S_\lambda\, ,
-\ee
+![equation]{<a href="http://www.codecogs.com/eqnedit.php?latex=\frac{dI_\lambda}{\kappa_\lambda&space;ds}=\frac{dI_\lambda}{d\tau_{\lambda&space;s}}=-I_\lambda&space;&plus;&space;\frac{\epsilon_\lambda}{\kappa_\lambda}=-I_\lambda&space;&plus;&space;S_\lambda,&space;\quad&space;\quad&space;\quad&space;(1)" target="_blank"><img src="http://latex.codecogs.com/gif.latex?\frac{dI_\lambda}{\kappa_\lambda&space;ds}=\frac{dI_\lambda}{d\tau_{\lambda&space;s}}=-I_\lambda&space;&plus;&space;\frac{\epsilon_\lambda}{\kappa_\lambda}=-I_\lambda&space;&plus;&space;S_\lambda,&space;\quad&space;\quad&space;\quad&space;(1)" title="\frac{dI_\lambda}{\kappa_\lambda ds}=\frac{dI_\lambda}{d\tau_{\lambda s}}=-I_\lambda + \frac{\epsilon_\lambda}{\kappa_\lambda}=-I_\lambda + S_\lambda, \quad \quad \quad (1)" /></a>}
+
 
 is tedious task. Luckily, some simplifications can be made in study of stellar atmospheres:
 
