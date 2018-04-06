@@ -80,11 +80,6 @@ class Calculator():
         self.SkySumFinal = [[0 for col in range(I)] for row in range(J)]
         self.imreshSumFinal = [[0 for col in range(I)] for row in range(J)]
         #---------------------------------------------------------------------#
-        #self.R1 = self.Cx - self.FirstPoint[0]
-        #self.R2 = self.SecondPoint[0] - self.Cx
-        #self.R = (self.R1+self.R2)/2
-        #print(R) 
-        #print(2*R/9)
         self.rout = [0 for x in range(10)]
         self.rin = [0 for x in range(10)]
         self.r = [0 for x in range(10)]
@@ -93,15 +88,14 @@ class Calculator():
         self.delmiu = [0 for row in range(9)]
         self.miukSum = 0
         self.miukFIN = [0 for row in range(9)]
-        #self.r1 = self.FirstPoint[0]
-        #self.r2 = self.FirstPoint[0] + (2*self.R/9)
+
         self.x = 0
-        #self.y = (2*self.R/9)
-        ###########   ###########  ##############  
+        #---------------------------------------------------------------------#
         self.Ik = [0 for row in range(10)]
         self.Il0 = 0   #[0 for row in range(10)]
         self.Il = [0 for row in range(10)]
         self.S = [0 for row in range(9)]
+        #self.S = 0
         self.Ilratio = [0 for row in range(10)]
         self.miu = 0
         self.sIk = [0 for row in range(1619)]
@@ -119,45 +113,32 @@ class Calculator():
         #########################
         #---------------------------------------------------------------------#
         # The bunch of constants
-        #FilterName = ['U', 'V', 'B', 'I', 'R']
-        self.lambd = [1, 420e-9, 547e-9, 871e-9, 648e-9]
-        self.Ilambd = [1, 3.6e13, 4.5e13, 1.6e13, 2.8e13]
-        self.deltalambd = [17.5, 45, 16.5, 118, 78.5]
-        # goes through all filters (from 1 to 4):
-        
-        #hPl = 6.626 * 10**(-34)
-        #kBolz = 1.38 * 10**(-23)
-        #clight = 3 * 10**8
-        #lambd = 420e-9
+        #self.lambd = [1, 420e-9, 547e-9, 871e-9, 648e-9]
+        #self.Ilambd = [1, 3.6e13, 4.5e13, 1.6e13, 2.8e13]
+        #self.deltalambd = [17.5, 45, 16.5, 118, 78.5]
         
         self.hPl = 6.626e-34
         self.kBolz = 1.38e-23
         self.clight = 3e8
-        #lambd = 420e-9
-        #lambd = [420e-9, 555e-9, 871e-9, 648e-9]
         #What changes per filter:
-        self.Ratio1 = [0 for col in range(7)]
-        self.Ratio2 = [0 for col in range(7)]
+        #self.Ratio1 = [0 for col in range(7)]
+        #self.Ratio2 = [0 for col in range(7)]
         
-        self.p2Array = [0 for col in range(7)]
-        self.IlArray = [0 for col in range(7)]
-        self.TeffArray = [0 for col in range(7)]
-        self.TtaulArray = [0 for col in range(7)]
+        #self.p2Array = [0 for col in range(7)]
+        #self.IlArray = [0 for col in range(7)]
+        #self.TeffArray = [0 for col in range(7)]
+        #self.TtaulArray = [0 for col in range(7)]
         
-        self.delMiuk = 0
-        #global Teff
+        self.Ratio1 = [0 for col in range(100)]
+        self.Ratio2 = [0 for col in range(100)]
         
-        # to retrieve the index of the chosen page
-        #global globalPageIndex
-        #print globalPageIndex
-        #globalPageIndex = event.GetSelection()
-        #print globalPageIndex
-        # indentifying the global variable to address it from other classes
-        #global globalNumberOfPages
-        #globalNumberOfPages = self.auiNotebook.GetPageCount()
-        # to retrieve the name of the page
-        #global globalPageName
+        self.p2Array = [0 for col in range(100)]
+        self.IlArray = [0 for col in range(100)]
+        self.TeffArray = [0 for col in range(100)]
+        self.TtaulArray = [0 for col in range(100)]
+
         
+        self.delMiuk = 0        
     
     def ShowImages(self, DataPanel, listLength, listPaths, 
                    ResultPanel, globalPageIndex):
@@ -165,24 +146,23 @@ class Calculator():
         print ResultPanel.comboSelection[0]
         print ResultPanel.comboSelection[1]
         print ResultPanel.comboSelection[2]
-        
-        #print self.pageIndex
-        #print pageIndex
+
         # taking the value of threshold
         self.threshold = ResultPanel.threshold
         #stands for filter in Ruslan's interpretation goes through values from 2 to 5
         #important to remember it is not index or y, but anather variabl for another loop
-        #self.f = globalPageIndex
-        #self.f = 3
         self.f = globalPageIndex# just for testing purposes
+        print ('self.f', self.f)
         #---------------------------------------------------------------------#
         #retrieving the values of constants
-        self.lambd[self.f] = ResultPanel.comboSelection[0]
-        self.Ilambd[self.f] = ResultPanel.comboSelection[1]
-        self.deltalambd[self.f] = ResultPanel.comboSelection[2]
+        #self.lambd[self.f] = ResultPanel.comboSelection[0]
+        #self.Ilambd[self.f] = ResultPanel.comboSelection[1]
+        #self.deltalambd[self.f] = ResultPanel.comboSelection[2]
+        self.lambd = ResultPanel.comboSelection[0]
+        self.Ilambd = ResultPanel.comboSelection[1]
+        self.deltalambd = ResultPanel.comboSelection[2]
         # variable for making matrix of data
         sizerRow = listLength * 2
-        #sizerColumns = [1, 2, 3]
         self.index = 0
         #Creating a sizer which will hold all canvases with data
         DataPanel.gridSizerShow = wx.GridSizer(rows = sizerRow, cols = 2, hgap=1, vgap=1)
@@ -211,14 +191,9 @@ class Calculator():
                 #the iniial value, so we need to save it somewhere)
                 #self.imresh_intensity_curve = self.im
 
-                
                 # the reshaping for sky images
-                #myfilesky = ('skyf' + str(f) + '_' + str(p) + '.tif') 
-                #thisFileSky = ('R:\\AstroMundus\\AstroLab\\Sky\\' + myfilesky)
                 self.Sky = misc.imread(DataPanel.listSkyPaths[self.index])
-                self.Skyresh = self.Sky.reshape(1219,1619)
-                #print ("Skyresh  ", self.Skyresh)
-
+                self.Skyresh = (self.Sky.reshape(1219,1619))/1000
                 ####################
                 ##Reshaping images##
                 ####################
@@ -229,7 +204,6 @@ class Calculator():
                             self.imresh[i,j] = 0
                         else: self.imresh[i,j] = 1
 
-                #self.index = self.index + 1
                 ##################################
                 ##Finding the center of each Sun##
                 ##################################
@@ -240,10 +214,7 @@ class Calculator():
                         break
                     for i in range(0,1219):
                         if (self.imresh[i,j] == 1):
-                            #print("1st point is: ")
                             self.FirstPoint = [j,i]
-        #                    print('1st point is:' + str(FirstPoint))
-                            #print(self.FirstPoint)
                             found = True
                             break  
         
@@ -254,10 +225,7 @@ class Calculator():
                         break
                     for i in range(0,1219):
                         if (self.imresh[i,j] == 1):
-                            #print("2nd point is: ")
                             self.SecondPoint = [j,i]
-        #                    print('2nd point is:' + str(SecondPoint))
-                            #print(SecondPoint)
                             found = True
                             break             
         
@@ -268,10 +236,7 @@ class Calculator():
                         break
                     for j in range(0,1619):
                         if (self.imresh[i,j] == 1):
-                            #print("3rd point is: ")
                             self.ThirdPoint = [j,i]
-        #                    print('3rd point is:' + str(ThirdPoint))
-                            #print(ThirdPoint)
                             found = True
                             break   
         
@@ -281,10 +246,7 @@ class Calculator():
                         break
                     for j in range(0, 1619):
                         if (self.imresh[i,j] == 1):
-                            #print("4th point is: ")
                             self.FourthPoint = [j,i]
-        #                    print('4th point is:' + str(FourthPoint))
-                            #print(FourthPoint)
                             found = True
                             break 
         
@@ -292,14 +254,12 @@ class Calculator():
                 # Center of the sun is C = (Cx, Cy)
                 self.Cx[self.index] = ((self.FirstPoint[0]*self.SecondPoint[1]-self.FirstPoint[1]*self.SecondPoint[0])*(self.ThirdPoint[0]-self.FourthPoint[0])-(self.FirstPoint[0]-self.SecondPoint[0])*(self.ThirdPoint[0]*self.FourthPoint[1]-self.ThirdPoint[1]*self.FourthPoint[0]))//((self.FirstPoint[0]-self.SecondPoint[0])*(self.ThirdPoint[1]-self.FourthPoint[1])-(self.FirstPoint[1]-self.SecondPoint[1])*(self.ThirdPoint[0]-self.FourthPoint[0]))
                 self.Cy[self.index] = ((self.FirstPoint[0]*self.SecondPoint[1]-self.FirstPoint[1]*self.SecondPoint[0])*(self.ThirdPoint[1]-self.FourthPoint[1])-(self.FirstPoint[1]-self.SecondPoint[1])*(self.ThirdPoint[0]*self.FourthPoint[1]-self.ThirdPoint[1]*self.FourthPoint[0]))//((self.FirstPoint[0]-self.SecondPoint[0])*(self.ThirdPoint[1]-self.FourthPoint[1])-(self.FirstPoint[1]-self.SecondPoint[1])*(self.ThirdPoint[0]-self.FourthPoint[0]))
-                #print (self.Cx[self.index])
                 # Let's not shift the center of the next image to the center of the first one in order to find an average
                 self.imreshSum = self.imreshSum + (np.roll(np.roll(self.imresh_intensity_curve_reshaped, (self.Cy[0]-self.Cy[self.index]), axis=None), (self.Cx[0]-self.Cx[self.index]), axis=0))
                 self.SkySum = self.SkySum + self.Skyresh
-                #print('imreshSum=', self.imreshSum)
                 #And plot everything, together with the intersection point:                
                 #---------------------------------------------------------#
-                # invoking native method for showing images
+                # invoking native method for showing images -Sun
                 DataPanel.listShowAxe[y].imshow(self.imresh_intensity_curve_reshaped)
                 
                 # Showing the intersection of two lines and the center of each image
@@ -318,8 +278,6 @@ class Calculator():
                 self.R2 = self.SecondPoint[0] - self.Cx[self.index]
                 self.R = (self.R1+self.R2)/2
                 
-                #print(R) 
-                #print(2*R/9)
                 self.r1 = self.FirstPoint[0]
                 self.r2 = self.FirstPoint[0] + (2*self.R/9)
                 self.x = 0
@@ -345,27 +303,14 @@ class Calculator():
                     self.delr[k] = (self.rin[k]-self.rout[k])/2 
                     
                     self.Error[k] = self.delr[k]/self.r[k]
-        #            print("Error " + str(Error[k]))
         
                     self.miuk[k] = (np.sqrt(1-(self.r[k]**2/self.R**2))).astype(float)
-                    #print('r[k]/R = ' + str(r[k]/R))
-                    #print('r[k]**2/R**2 = ' + str(float(r[k]**2/R**2)))
-                    #print('np.sqrt(1-(r[k]**2/R**2)) = ' + str(float(np.sqrt(1-(r[k]**2/R**2)))))
+
         
                     self.delmiu[k] = (self.r[k]*self.delr[k])/(np.sqrt(1- (self.r[k]**2/self.R**2)))
                     self.IkN = np.asarray([[0 for col in range(1619)] for row in range(1219)])
                     #Now we determine the average intensity for each k-th region
-            ##    for z in range (int(rin[k]), int(rout[k])):
-                    #Intensity of all z pixels in i-th region
-            ##        IkN = IkN + imresh[Cy[p],(Cx[p]+z)]
-                #print('For ' + str(z) + ' steps')
-                #print('Roots and Squares: '+ str((np.sqrt((x+(2*R/9))*(x+(2*R/9)) +(y+(2*R/9))*(y+(2*R/9)))+1-np.sqrt(x*x +y*y))))
-                #Number of pixels in k-th region
-            #    Nk = (2*math.pi*(np.sqrt((x+(2*R/9))*(x+(2*R/9)) +(y+(2*R/9))*(y+(2*R/9)))+1-np.sqrt(x*x +y*y))/z)
-                #print('For ' + str(Nk) + ' Pixels')
-                #Intensity associated with i-th region is the average over the intensities of all pixels
-            ##    Ik = IkN / z
-                    # Average intensity for k-th region
+                    
                     self.Ik[k] = (self.imresh_intensity_curve_reshaped[self.Cy[self.index],
                                   (self.Cx[self.index]+int(self.rin[k]))]+self.imresh_intensity_curve_reshaped[self.Cy[self.index],(self.Cx[self.index]+int(self.rout[k]))])//2
                     
@@ -382,9 +327,9 @@ class Calculator():
                     self.Il0 = self.imresh_intensity_curve_reshaped[self.Cx[self.index],self.Cy[self.index]]
                     self.Il[k] = self.Ik[k].astype(float)/self.Ik[0]
                     self.ErrorSum += abs(self.Error[k])
-                #print ("Ik is", self.Ik)
+
                 self.ErrorI = self.ErrorSum/9
-                #print("Intensity error " + str(self.ErrorI))
+
                 print ("miuk", self.miuk)
                 print ("Ik ", self.Ik)
         
@@ -392,74 +337,28 @@ class Calculator():
                 np.array(self.IlSum)[self.f][k] += np.array(self.Il)[k]
                 #####################
                 self.IlFIN[self.f][k] = float(self.IlSum[self.f][k])/(self.index+1) 
-                #print self.IlFIN
-                #####################
-                ### Polynomial fit ##
-                #####################
-                
-            
-                self.imreshSumFinal = self.imreshSum/(self.index+1)
-                self.SkySumFinal = self.SkySum/(self.index+1)
-                self.imreshSumFinal = self.imreshSumFinal - self.SkySumFinal
-                #print (self.imreshSumFinal[self.index])
-                #print ("SkySumFinal", self.SkySumFinal[self.index])
-
-
-                #################################################################################### 
-                #Just the picture of the sun after averaging over all the pictuers for this particular filter
-                #plt.figure()
-                #plt.title('Resulting picture for filter No ' + str(self.f) + ', and ' + str(self.index+1) + ' pictures')
-                #plt.imshow(self.imreshSumFinal)
-                
-                #myfile = ('Picture_for_f_' + str(self.f) + '_over_' + str(self.index+1) + '.tif') 
-                #thisFileName = ('R:\\AstroMundus\\AstroLab\\oldad_average\\' + myfile)
-                #plt.savefig(thisFileName)
-            
-                
-                #myfile = ('Averaged_for_f_' + str(self.f) + '_over_' + str(self.index+1) + '_pictures.tif') 
-                #thisFileName = ('R:\\AstroMundus\\AstroLab\\oldad_average\\' + myfile)
-                #imsave(thisFileName, imreshSumFinal)
-                #np.save('test1.txt', thisFileName)
-                
-                #np.savetxt('data_a.txt', self.imreshSumFinal)
                 
             else:
                 # Drawing the data on the canvas
                 DataPanel.listShowFigure[y].set_canvas(DataPanel.listShowFigureCanvas[y])
                 # Clearing the axes
-                DataPanel.listShowAxe[y].clear()
-                # reading an image from the same folder
-                #self.imresh_intensity_curve = misc.imread(listPaths[self.index])
-                # rehsping an array (changing the ) 
-                #self.imresh = self.im.reshape(1219,1619)
-                # reading an image from the same folder
-                #self.im = misc.imread(listPaths[self.index])
-                # rehsping an array (changing the ) 
-                #self.imresh = self.im.reshape(1219,1619)
-                
+                DataPanel.listShowAxe[y].clear()               
                 # Intensities for every picture in cycle:
                 DataPanel.listShowAxe[y].set_ylabel('Intensity (ADU)')
                 DataPanel.listShowAxe[y].set_xlabel('Linear position')
-                #DataPanel.listShowFigure[y].gca().invert_xaxis()
-                #print self.SecondPoint[1]
+                # for each variable we need to account the skies to get reasonable values for the intensity curves
+                image_minus_sky = self.imresh_intensity_curve_reshaped - self.Skyresh
+                print ('image_minus_sky', image_minus_sky)
                 #Vertical profile
-                DataPanel.listShowAxe[y].plot(self.imresh_intensity_curve[(self.ThirdPoint[1]-50):(self.FourthPoint[1]+50),self.Cx[self.index]], 'r')
+                DataPanel.listShowAxe[y].plot(image_minus_sky[(self.ThirdPoint[1]-50):(self.FourthPoint[1]+50),self.Cx[self.index]], 'r')
                 #Horizontal profile
-                DataPanel.listShowAxe[y].plot(self.imresh_intensity_curve[self.Cy[self.index],(self.FirstPoint[0]-50):(self.SecondPoint[0]+50)], 'b')
-                #Vertical profile
-                #DataPanel.listShowAxe[y].plot(self.imresh_intensity_curve[(self.ThirdPoint[1]):(self.FourthPoint[1]),self.Cx[self.index]], 'r')
-                #Horizontal profile
-                #DataPanel.listShowAxe[y].plot(self.imresh_intensity_curve[self.Cy[self.index],(self.FirstPoint[0]):(self.SecondPoint[0])], 'b')
+                DataPanel.listShowAxe[y].plot(image_minus_sky[self.Cy[self.index],(self.FirstPoint[0]-50):(self.SecondPoint[0]+50)], 'b')
                 # draw canvas
                 DataPanel.listShowFigureCanvas[y].draw()
                 # keeping this index he same until now to draw nice intensity plot
                 self.index = self.index + 1
             
             self.number = self.number + 1
-            #self.IlFIN[self.f][k] = float(self.IlSum[self.f][k])/(self.index+1) 
-        
-            # The values of the central intensity and the intensity ratio:
-            #print('Central intensity: ' + str(self.Ik[0]))
 
             #adding plots to sizer
             DataPanel.gridSizerShow.Add(DataPanel.listShowFigureCanvas[y], 0, wx.ALL)
@@ -468,28 +367,19 @@ class Calculator():
         # Setting a sizer to a panel   
         DataPanel.SetSizer(DataPanel.gridSizerShow)
         #DataPanel.Update()
-        ####################################################################################
-        ################################
-        ##Resulting picture of the Sun##
-        ################################
-        #Just the picture of the sun after averaging over all the pictuers for this particular filter
-        # Drawing the data on the canvas
-        #ResultPanel.listFigure[0].set_canvas(ResultPanel.listFigureCanvas[0])
-        # Clearing the axes
-        #ResultPanel.listAxe[0].clear()
-        #Showing the averaged picture of the Sun
-        #ResultPanel.listAxe[0].imshow(self.imreshSumFinal)
-        #ResultPanel.listFigureCanvas[0].draw()
+
+        self.imreshSumFinal = self.imreshSum/self.index
+        self.SkySumFinal = self.SkySum/self.index
+        self.imreshSumFinal = self.imreshSumFinal - self.SkySumFinal
         
+        print ('self.imreshSumFinal', self.imreshSumFinal)
         np.savetxt('data_a.txt', self.imreshSumFinal)
-        #print ("imreshSumFinal: ", self.imreshSum)
         ###########################################################
         ## Looking for the center of the Sun (resulting picture) ##
         ###########################################################
         b = np.loadtxt('data_a.txt')  
         c = np.loadtxt('data_a.txt')
         
-        #threshold = 10000
         for j in range(0,1619):
             for i in range(0,1219):
                 if (b[i,j] < self.threshold):
@@ -503,11 +393,8 @@ class Calculator():
             if found:
                 break
             for i in range(0,1219):
-                if (b[i,j] == 1):
-                    #print("1st point is: ")
+                if (b[i,j] == 1) and (b[i+1,j] == 1):
                     self.FirstPoint = [j,i]
-    #                print('Left (1st) point is:' + str(FirstPoint))
-                    #print(FirstPoint)
                     found = True
                     break  
     
@@ -517,11 +404,8 @@ class Calculator():
             if found:
                 break
             for i in range(0,1219):
-                if (b[i,j] == 1):
-                    #print("2nd point is: ")
+                if (b[i,j] == 1) and (b[i+1,j] == 1):
                     self.SecondPoint = [j,i]
-    #                print('Right (2nd) point is:' + str(SecondPoint))
-                    #print(SecondPoint)
                     found = True
                     break             
     
@@ -531,11 +415,8 @@ class Calculator():
             if found:
                 break
             for j in range(0,1619):
-                if (b[i,j] == 1):
-                    #print("3rd point is: ")
+                if (b[i,j] == 1) and (b[i+1,j] == 1):
                     self.ThirdPoint = [j,i]
-    #                print('Top (3rd) point is:' + str(ThirdPoint))
-                    #print(ThirdPoint)
                     found = True
                     break   
     
@@ -544,11 +425,8 @@ class Calculator():
             if found:
                 break
             for j in range(0, 1619):
-                if (b[i,j] == 1):
-                    #print("4th point is: ")
+                if (b[i,j] == 1) and (b[i+1,j] == 1):
                     self.FourthPoint = [j,i]
-    #                print('Bottom (4th) point is:' + str(FourthPoint))
-                    #print(FourthPoint)
                     found = True
                     break
         #NAgain, mathematical formula for the intersection of the two lines (i.e., center of the sun): 
@@ -561,15 +439,6 @@ class Calculator():
              -(self.FirstPoint[1]-self.SecondPoint[1])*(self.ThirdPoint[0]*self.FourthPoint[1]-self.ThirdPoint[1]*self.FourthPoint[0])
              )//((self.FirstPoint[0]-self.SecondPoint[0])*(self.ThirdPoint[1]-self.FourthPoint[1])-(self.FirstPoint[1]-self.SecondPoint[1])*
                 (self.ThirdPoint[0]-self.FourthPoint[0]))
-    #    print('Final Center is: (' + str(Gx) + ', ' + str(Gy) +')')    
-    
-        # After we have our center, we can plot an intensity curve
-        # Opening of averaged pictures from where they were saved previously: 
-        #b = np.loadtxt('data_a.txt')    
-        ####################################################################################
-        #Just the picture of the sun after averaging over all the pictuers for this particular filter:
-        #plt.figure()
-        #plt.title('Averaged picture of the Sun for filter ' + str(f) + '_(' + str(p+1) + ' pictures)')
         # Drawing the data on the canvas
         ResultPanel.listFigure[0].set_canvas(ResultPanel.listFigureCanvas[0])
         # Clearing the axes
@@ -585,12 +454,10 @@ class Calculator():
         ResultPanel.listAxe[0].plot([self.FourthPoint[0]], [self.FourthPoint[1]], marker='^', color='y')
         ResultPanel.listAxe[0].plot((self.FirstPoint[0], self.SecondPoint[0]), (self.FirstPoint[1], self.SecondPoint[1]), color = 'g')
         ResultPanel.listAxe[0].plot((self.ThirdPoint[0], self.FourthPoint[0]), (self.ThirdPoint[1], self.FourthPoint[1]), color = 'g')
-    
+        
+        # Putting the center to the picture
         ResultPanel.listAxe[0].plot([self.Gx], [self.Gy], marker='x', color='g')
         ResultPanel.listFigureCanvas[0].draw()
-        #myfile = ('Final_for_f_' + str(f) + '_(' + str(p+1) + ' pictures)+Center_Point.tif') 
-        #thisFileName = ('R:\\AstroMundus\\AstroLab\\oldad_average\\' + myfile)
-        #plt.savefig(thisFileName)
         ##########################################
         ##The intensity plot (resulting picture)##
         ##########################################
@@ -598,19 +465,14 @@ class Calculator():
         ResultPanel.listFigure[1].set_canvas(ResultPanel.listFigureCanvas[1])
         # Clearing the axes
         ResultPanel.listAxe[1].clear()
-        #plt.title('Everything_final_f_' + str(f) + '_(20 pictures)')
-        #plt.ylabel('Intensity (ADU)')
-        #plt.xlabel('Linear position')
-        #plt.gca().invert_xaxis()
-        #Vertical profile
-        ResultPanel.listAxe[1].plot(self.imresh_intensity_curve[
+
+        ResultPanel.listAxe[1].plot(self.imreshSumFinal[
                 (self.ThirdPoint[1]-50):(self.FourthPoint[1]+50),self.Gx], 'r')
         #Horizontal profile
-        ResultPanel.listAxe[1].plot(self.imresh_intensity_curve[
-                self.Gy,(self.FirstPoint[0]-50):(self.SecondPoint[0]+50)], 'b')    
-        #myfile = ('Final_Center_to_Limb_f_' + str(f) + '_' + str(p+1) + '_picts.tif') 
-        #thisFileName = ('R:\\AstroMundus\\AstroLab\\oldad_average\\' + myfile)
-        #plt.savefig(thisFileName)
+
+        ResultPanel.listAxe[1].plot(self.imreshSumFinal[
+                self.Gy,(self.FirstPoint[0]-50):(self.SecondPoint[0]+50)], 'b')
+            
         ResultPanel.listFigureCanvas[1].draw()
         ####################
         ## Polynomial fit ##
@@ -638,14 +500,7 @@ class Calculator():
         print ("miuk1 ", self.miuk1)
         print ("Il1 ", self.Il1)
         
-        #self.p2 = [0 for i in xrange (0, 3)]
-        #degree of polynomial
-        #n=2
-        #self.p2, res, _, _, _ = np.polyfit(self.miuk1, self.Il1, n, full=True)
-        #self.p2= np.polyfit(self.miuk1, self.Il1, n)
-        #self.p2Array[self.f] = self.p2
         n=3
-        #results = sm.OLS(self.Il1, np.vander(self.miuk1, n)).fit()
         # roughly speaking it provides you with any possible test
         results = sm.OLS(self.Il1, np.vander(self.miuk1, n)).fit()
         print (results.summary())
@@ -655,21 +510,9 @@ class Calculator():
         self.p2 = results.params
         self.p2Array[self.f] = self.p2
         print('Standard errors: ', results.bse)
-        #dir(results)
-        
-        #print ('residuals', res)
-        #print ('p2', p2)
-        #print ('S', S)
-        #print ('Erro and St deviation is', mu)
-        
-        # Do the interpolation for plotting:
-        #t = np.linspace(-0.5, 6.5, 500)
-        # Matrix with rows 1, t, t**2, ...:
-        #TT = np.vstack([t**(n-i) for i in range(n+1)]).T
-        #yi = np.dot(TT, self.p2)  # matrix multiplication calculates the polynomial values
-        #C_yi = np.dot(TT, np.dot(C_p, TT.T)) # C_y = TT*C_z*TT.T
-        #sig_yi = np.sqrt(np.diag(C_yi))  # Standard deviations are sqrt of diagonal
-        #print ('sig_yi = ', sig_yi)
+
+        print('R2: ', results.rsquared)
+
         #Coefficients
         global globalA0
         global globalA1
@@ -678,9 +521,10 @@ class Calculator():
         global globalA0Error
         global globalA1Error
         global globalA2Error
+        # Result for R squared test to be shown in the resulting table
+        global globalRSquaredTest
         
         print(" ")
-        #print("Second order fit coefficients for filter " + self.FilterName[self.f])
         print("p2 = " + str(self.p2))
         print("a0 = " + str(self.p2[2]))
         print("a1 = " + str(self.p2[1]))
@@ -691,26 +535,30 @@ class Calculator():
         globalA0 = self.p2[2]
         globalA1 = self.p2[1]
         globalA2 = self.p2[0]/2
-        
+        # errors for coefficients
         globalA0Error = results.bse[2]
         globalA1Error = results.bse[1]
         globalA2Error = results.bse[0]/2
+        # R squared test
+        globalRSquaredTest = results.rsquared
         
         self.tau = np.arange(0., 2., 0.01)
-        self.S = (self.Ilambd[self.f])*(self.p2[2] + self.tau*self.p2[1] + (self.tau**2)*self.p2[0]/2 )
+        #self.S = (self.Ilambd[self.f])*(self.p2[2] + self.tau*self.p2[1] + (self.tau**2)*self.p2[0]/2 )
+        self.S = (self.Ilambd)*(self.p2[2] + self.tau*self.p2[1] + (self.tau**2)*self.p2[0]/2 )
     
-        self.Ratio1[self.f] = (self.hPl*self.clight)/((self.kBolz*self.lambd[self.f]))
+        #self.Ratio1[self.f] = (self.hPl*self.clight)/((self.kBolz*self.lambd[self.f]))
+        self.Ratio1[self.f] = (self.hPl*self.clight)/((self.kBolz*self.lambd))
         print ("Ratio1 ", self.Ratio1)
-        self.Ratio2[self.f] = (2*self.hPl*(self.clight**2))/(self.lambd[self.f]**5)
+        #self.Ratio2[self.f] = (2*self.hPl*(self.clight**2))/(self.lambd[self.f]**5)
+        self.Ratio2[self.f] = (2*self.hPl*(self.clight**2))/(self.lambd**5)
         print ("Ratio2 ", self.Ratio2)
-        #print("Ratio1 for filter" + str(self.f) + ' - ' + self.FilterName[self.f] + ' is ' + str(self.Ratio1[self.f]))
-        #print("Ratio2 for filter" + str(self.f) + ' - ' + self.FilterName[self.f] + ' is ' + str(self.Ratio2[self.f]))
     
         self.Ttaul = self.Ratio1[self.f] / (np.log(1 + self.Ratio2[self.f]/self.S ))
-        #print ("Ttaul ", self.Ttaul)
+
         self.tau23 = 0.666
-        self.Seff = (self.Ilambd[self.f])*(self.p2[2] + (self.tau23)*self.p2[1] + (self.tau23**2)*self.p2[0]/2 )
-        #print("Seff ", self.Seff)
+        #self.Seff = (self.Ilambd[self.f])*(self.p2[2] + (self.tau23)*self.p2[1] + (self.tau23**2)*self.p2[0]/2 )
+        self.Seff = (self.Ilambd)*(self.p2[2] + (self.tau23)*self.p2[1] + (self.tau23**2)*self.p2[0]/2 )
+        
         self.Teff = self.Ratio1[self.f] / (np.log(1 + self.Ratio2[self.f]/self.Seff))
         # calculating the result error for the coefficients
         k=9
@@ -719,24 +567,18 @@ class Calculator():
                       +2*(results.bse[2]/results.params[2])*(results.bse[1]/results.params[1])
                       +2*(results.bse[1]/results.params[1])*(results.bse[0]/results.params[0]/2)
                       +2*(results.bse[0]/results.params[0]/2)*(results.bse[2]/results.params[2])) 
-        SEr = np.sqrt(WholeError**2 + self.deltalambd[self.f]**2 )
-        TeffError = np.sqrt((self.deltalambd[self.f])**2 + (np.var(self.miuk)/(k+1))**2 + SEr**2
-                       +2*self.deltalambd[self.f]*np.var(self.miuk)/(k+1) +2*self.deltalambd[self.f]*SEr +2*SEr*np.var(self.miuk)/(k+1))
-        #print("Effective temperature: " + str(Teff) + ' +/- ' + str(TeffError) )
+        #SEr = np.sqrt(WholeError**2 + self.deltalambd[self.f]**2 )
+        SEr = np.sqrt(WholeError**2 + self.deltalambd**2 )
+        #TeffError = np.sqrt((self.deltalambd[self.f])**2 + (np.var(self.miuk)/(k+1))**2 + SEr**2
+        #               +2*self.deltalambd[self.f]*np.var(self.miuk)/(k+1) +2*self.deltalambd[self.f]*SEr +2*SEr*np.var(self.miuk)/(k+1))
+        TeffError = np.sqrt((self.deltalambd)**2 + (np.var(self.miuk)/(k+1))**2 + SEr**2
+                       +2*self.deltalambd*np.var(self.miuk)/(k+1) +2*self.deltalambd*SEr +2*SEr*np.var(self.miuk)/(k+1))
         
         self.IlArray[self.f] = self.Il
         self.TeffArray[self.f] = self.Teff
         self.TtaulArray[self.f] = self.Ttaul
         
         self.polyval = np.polyval(self.p2Array[self.f],self.miuk1)
-        #---------------------------------------------------------------------#
-        #self.variance = [0 for i in xrange (0, 7)]
-        #self.error = [0 for i in xrange (0, 7)]
-        #calculating the variance
-        #self.variance[1] = self.polyval[1] - self.p2[1]
-        #print ("Variance!!!!", self.variance[1])
-        #self.error[1] = np.sqrt(self.variance[1]/5)
-        #print ("Error in a1!!!!", self.error[1])
         #---------------------------------------------------------------------#
         # assiging global variables to retrieve their values later
         global globalTeff
@@ -756,27 +598,12 @@ class Calculator():
         global globalPolyval
         globalPolyval = self.polyval
         
-
-        # identifying global variables to plot the resulting graph
-        #global globalIlArray
-        #globalIlArray = [0 for col in range(7)]
-        #globalIlArray[self.f] = self.Il
-        #print ("globalIlArray ", globalIlArray)
-        
-        #global globalTeffArray
-        #globalTeffArray = [0 for col in range(7)]
-        #globalTeffArray[self.f] = self.Teff
-        
-        #global globalTtaulArray
-        #globalTtaulArray = [0 for col in range(7)]
-        #globalTtaulArray[self.f] = self.Ttaul
-        
-        self.ColShape = ['rv', 'rv', 'bs', 'c.', 'm^', 'b:']
-        self.ColShape2 = ['rv', 'rv', 'r-', 'b-.', 'm--', 'b:']
-        self.Color = ['w', 'm', 'r', 'b', 'c', 'm']
-        self.Color2 = ['w', 'r', 'r', 'b.', 'm', 'b']
-        self.Shape = [u'D', u'v', u's', u'.', u'^', u'o'] # I changed the first one from u'--' to u'd'
-        self.Shape2 = [u'--', u'-', u'--', u'-.', u'--', u':']
+        self.ColShape = ['rv', 'rv', 'bs', 'c.', 'm^', 'b:', 'rv', 'rv', 'bs', 'c.', 'm^', 'b:', 'rv', 'rv', 'bs', 'c.', 'm^', 'b:']
+        self.ColShape2 = ['rv', 'rv', 'r-', 'b-.', 'm--', 'b:', 'rv', 'rv', 'r-', 'b-.', 'm--', 'b:', 'rv', 'rv', 'r-', 'b-.', 'm--', 'b:']
+        self.Color = ['y', 'm', 'r', 'b', 'c', 'm', 'y', 'm', 'r', 'b', 'c', 'm', 'y', 'm', 'r', 'b', 'c', 'm']
+        self.Color2 = ['y', 'r', 'r', 'b.', 'm', 'b', 'y', 'r', 'r', 'b.', 'm', 'b', 'y', 'r', 'r', 'b.', 'm', 'b']
+        self.Shape = [u'D', u'v', u's', u'.', u'^', u'o',u'D', u'v', u's', u'.', u'^', u'o',u'D', u'v', u's', u'.', u'^', u'o'] # I changed the first one from u'--' to u'd'
+        self.Shape2 = [u'--', u'-', u'--', u'-.', u'--', u':', u'--', u'-', u'--', u'-.', u'--', u':', u'--', u'-', u'--', u'-.', u'--', u':']
         self.lines = [0 for col in range(7)]
         self.labels = [0 for col in range(7)]
         
@@ -787,16 +614,9 @@ class Calculator():
         ResultPanel.listAxe[2].clear()
         ResultPanel.listAxe[2].set_xlabel(r'$\mu$')
         ResultPanel.listAxe[2].set_ylabel('Intensity ratio I(0,' + r'$\mu$)' + '/I(0,1)')
-        ResultPanel.listAxe[2].scatter(self.miuk, self.IlArray[self.f], marker=self.Shape[self.f])   
-        #plt.plot(miuk, Il, 'g^')    
+        ResultPanel.listAxe[2].scatter(self.miuk, self.IlArray[self.f], marker=self.Shape[self.f])      
         ResultPanel.listAxe[2].plot(self.miuk1, self.polyval)   
-        #plt.legend([red_dot, (red_dot, white_cross), ], ["B", "I", "R"])
-        #self.line2 = mlines.Line2D([], [], color='r', marker='^', markersize=5, label="B")
-        #self.line3 = mlines.Line2D([], [], color='b', marker='s', markersize=5, label="I")
-        #self.line4 = mlines.Line2D([], [], color='g', marker='.', markersize=5, label="R")
-        #self.lines = [self.line2, self.line3, self.line4]
-        #self.labels = [self.line.get_label() for self.line in self.lines]
-        #ResultPanel.listAxe[2].legend(self.lines, self.labels)
+
         ResultPanel.listFigureCanvas[2].draw()
         
         #Drawing the last curve
@@ -806,20 +626,10 @@ class Calculator():
         ResultPanel.listAxe[3].clear()
         ResultPanel.listAxe[3].set_xlabel(r'$\tau$')
         ResultPanel.listAxe[3].set_ylabel('Temperature T(' + r'$\tau$)')
-        #ResultPanel.listAxe[3].plot(self.tau, self.TtaulArray[self.f], self.ColShape2[self.f])
-        #ResultPanel.listAxe[3].plot(self.tau23, self.TeffArray[self.f], self.ColShape2[self.f])
-        ResultPanel.listAxe[3].plot(self.tau, self.Ttaul, self.ColShape2[self.f])
-        ResultPanel.listAxe[3].plot(self.tau23, self.Teff, self.ColShape2[self.f])
 
-        #self.line2 = mlines.Line2D([], [], color='m', linestyle=self.Shape2[2], label="B")
-        #self.line3 = mlines.Line2D([], [], color='r', linestyle=self.Shape2[1], label="I")
-        #self.line4 = mlines.Line2D([], [], color='b', linestyle=self.Shape2[3], label="R")
-        #self.lines = [self.line2, self.line3, self.line4]
-        #self.labels = [self.line.get_label() for self.line in self.lines]
-        #ResultPanel.listAxe[3].legend(self.lines, self.labels)
+        ResultPanel.listAxe[3].plot(self.tau, self.Ttaul, linestyle = self.Shape2[self.f], color=self.Color[self.f])
+        ResultPanel.listAxe[3].plot(self.tau23, self.Teff, marker = '*')
         ResultPanel.listFigureCanvas[3].draw()
-        
-        #Atlast, the effective temperature
         
     
 ###############################################################################
@@ -855,23 +665,6 @@ class TabPanel(wx.Panel):
         self.panelSizer.Add(ResultPanel, 0, wx.EXPAND|wx.ALL,border=5)
         self.SetSizer(self.panelSizer)
         #---------------------------------------------------------------------#
-        # to retrieve the index of the chosen page
-        #global globalPageIndex
-        #print globalPageIndex
-        #globalPageIndex = event.GetSelection()
-        #print globalPageIndex
-        # indentifying the global variable to address it from other classes
-        #global globalNumberOfPages
-        #globalNumberOfPages = self.auiNotebook.GetPageCount()
-        # to retrieve the name of the page
-        #global globalPageName
-        #print globalPageName
-        #globalPageName = self.auiNotebook.GetPageText(globalPageIndex)
-        #---------------------------------------------------------------------#
-        # getting the value of the selected index to know which graph 
-        #(and data in general) I am addressing
-        #self.tabIndex = event.GetSelection()
-        #creating a list of paths to the photos
         DataPanel.listPaths = []
         DataPanel.listLength = 0
         # This is for additional information for instance skyiamges which we are using in our analysis
@@ -882,8 +675,6 @@ class TabPanel(wx.Panel):
         # the index of data in the list to find the right one
         self.index = 0
         # Chosing a threshold
-        #self.threshold = 10000
-        #creating an list(array) of drawing data in DataPanel
         DataPanel.listShowFigure = [] # empty list
         DataPanel.listShowAxe = []
         DataPanel.listShowFigureCanvas = []
@@ -913,12 +704,19 @@ class TabPanel(wx.Panel):
                                arg1 = DataPanel, arg2 = ResultPanel: self.onOpenFile2(event, arg1, arg2))
         #---------------------------------------------------------------------#
         ResultPanel.labelThreshold = wx.StaticText(ResultPanel, label = " Threshold:")
-        ResultPanel.textCtrlThreshold = wx.TextCtrl(ResultPanel, value = "10000", size = (-1, -1))
-        
-        self.lambd = ["1", "420e-9", "547e-9", "648e-9", "871e-9"]
-        self.Ilambd = ["1", "3.6e13", "4.5e13", "2.8e13", "1.6e13"]
-        self.deltalambd = ["17.5", "45", "16.5", "78.5", "118"]
-        
+        ResultPanel.textCtrlThreshold = wx.TextCtrl(ResultPanel, value = "2500", size = (-1, -1))
+        #---------------------------------------------------------------------#
+        self.Filters = ["U", "B", "V", "R", "I"]
+        self.lambd = ["366e-9", "420e-9", "547e-9", "648e-9", "871e-9"]
+        self.Ilambd = ["4.2e13", "4.5e13", "3.6e13", "2.8e13", "1.6e13"]
+        self.deltalambd = ["17.5", "36.5", "45", "78.5", "118"]
+        ResultPanel.labelFilterLambda = wx.StaticText(ResultPanel, label = ' Custom')
+        ResultPanel.labelFilterILambda = wx.StaticText(ResultPanel, label = ' Custom')
+        ResultPanel.labelFilterDeltaLambda = wx.StaticText(ResultPanel, label = ' Custom')
+        # creating the sizer for holding these labels and respective comboboxes
+        ResultPanel.sizerFilterLambda = wx.BoxSizer(wx.HORIZONTAL)
+        ResultPanel.sizerFilterILambda = wx.BoxSizer(wx.HORIZONTAL)
+        ResultPanel.sizerFilterDeltaLambda = wx.BoxSizer(wx.HORIZONTAL)
         # for finding the right value of the right combobox
         ResultPanel.comboSelection = ['' for f in xrange(0, 3)]
         
@@ -939,6 +737,15 @@ class TabPanel(wx.Panel):
         ResultPanel.comboboxDeltaLambda = wx.ComboBox(ResultPanel, choices=self.deltalambd)
         ResultPanel.comboboxDeltaLambda.Bind(wx.EVT_COMBOBOX, lambda event, 
                                arg1 = ResultPanel: self.OnDeltaLambdaCombo(event, arg1))
+        #---------------------------------------------------------------------#
+        ResultPanel.sizerFilterLambda.Add(ResultPanel.labelFilterLambda, proportion = 1, flag = wx.ALL)
+        ResultPanel.sizerFilterLambda.Add(ResultPanel.comboboxLambda, proportion = 2, flag = wx.ALL)
+        
+        ResultPanel.sizerFilterILambda.Add(ResultPanel.labelFilterILambda, proportion = 1, flag = wx.ALL)
+        ResultPanel.sizerFilterILambda.Add(ResultPanel.comboboxILambda, proportion = 2, flag = wx.ALL)
+        
+        ResultPanel.sizerFilterDeltaLambda.Add(ResultPanel.labelFilterDeltaLambda, proportion = 1, flag = wx.ALL)
+        ResultPanel.sizerFilterDeltaLambda.Add(ResultPanel.comboboxDeltaLambda, proportion = 2, flag = wx.ALL)
         #---------------------------------------------------------------------#
         # Button for showing data
         ResultPanel.buttonShowData = wx.Button(ResultPanel, -1, "Show")
@@ -989,14 +796,14 @@ class TabPanel(wx.Panel):
         ResultPanel.sizerThreshold.Add(ResultPanel.textCtrlThreshold, proportion = 1, flag = wx.ALL)
         #for \lambda varable
         ResultPanel.sizerLambda.Add(ResultPanel.labelLambda, proportion = 1, flag = wx.ALL)
-        ResultPanel.sizerLambda.Add(ResultPanel.comboboxLambda, proportion = 1, flag = wx.ALL)
+        ResultPanel.sizerLambda.Add(ResultPanel.sizerFilterLambda, proportion = 1, flag = wx.ALL)
         #for \I_\lambda variable
         ResultPanel.sizerILambda.Add(ResultPanel.labelILambda, proportion = 1, flag = wx.ALL)
-        ResultPanel.sizerILambda.Add(ResultPanel.comboboxILambda, proportion = 1, flag = wx.ALL)
+        ResultPanel.sizerILambda.Add(ResultPanel.sizerFilterILambda, proportion = 1, flag = wx.ALL)
         #ResultPanel.sizerILambda.Add(ResultPanel.textCtrlThreshold, proportion = 1, flag = wx.ALL)
         #for \Delta\lambda variable
         ResultPanel.sizerDeltaLambda.Add(ResultPanel.labelDeltaLambda, proportion = 1, flag = wx.ALL)
-        ResultPanel.sizerDeltaLambda.Add(ResultPanel.comboboxDeltaLambda, proportion = 1, flag = wx.ALL)
+        ResultPanel.sizerDeltaLambda.Add(ResultPanel.sizerFilterDeltaLambda, proportion = 1, flag = wx.ALL)
         #ResultPanel.sizerDeltaLambda.Add(ResultPanel.textCtrlThreshold, proportion = 1, flag = wx.ALL)
         
         #combining all sizers (for variable and show button) together
@@ -1026,20 +833,15 @@ class TabPanel(wx.Panel):
         # Setting main ResultPanel Sizer
         ResultPanel.SetSizer(ResultPanel.mainSizer)
         #---------------------------------------------------------------------#
-        #self.listPageName = []
         # identifying global variables to plot the resulting graph
         global globalIlArray
-        #globalIlArray = [0 for col in range(7)]
-        #globalIlArray[self.f] = self.Il
+
         global globalIl
         #print ("globalIlArray ", globalIlArray)
         global globalTeffArray
-        #globalTeffArray = [0 for col in range(7)]
-        #globalTeffArray[self.f] = self.Teff
+
         global globalTtaulArray
-        #globalTtaulArray = [0 for col in range(7)]
-        #globalTtaulArray[self.f] = self.Ttaul
-        #globalPageIndex = event.GetSelection()
+
         global globalmiukArray
         global globalmiuk1Array
         global globalPolyvalArray
@@ -1053,43 +855,57 @@ class TabPanel(wx.Panel):
         global globalA2ErrorArray
         # error in the temperatures
         global globalTeffErrorArray
-        #print globalPageIndex
-        # indentifying the global variable to address it from other classes
-        #global globalNumberOfPages
-        #globalNumberOfPages = self.auiNotebook.GetPageCount()
-        # to retrieve the name of the page
-        #global globalPageName
-        # for making an array of filters and other stuff
-        #for f in xrange (0, globalNumberOfPages):
-        #    self.listPageName[f] = globalPageName
+        # For R sqruared test
+        global globalRSquaredTestArray
         
     ''' ComboBox Methods '''
     def OnLambdaCombo(self, event, ResultPanel):
         
-        ResultPanel.comboSelection[0] = float(ResultPanel.comboboxLambda.GetValue())
-        #print ResultPanel.comboSelection[0]
+        data = ResultPanel.comboboxLambda.GetValue()
+        ResultPanel.comboSelection[0] = float(data)
+        if data == self.lambd[0]:
+            ResultPanel.labelFilterLambda.SetLabel(self.Filters[0])
+        if data == self.lambd[1]:
+            ResultPanel.labelFilterLambda.SetLabel(self.Filters[1])
+        if data == self.lambd[2]:
+            ResultPanel.labelFilterLambda.SetLabel(self.Filters[2])
+        if data == self.lambd[3]:
+            ResultPanel.labelFilterLambda.SetLabel(self.Filters[3])
+        if data == self.lambd[4]:
+            ResultPanel.labelFilterLambda.SetLabel(self.Filters[4])
         
     def OnILambdaCombo(self, event, ResultPanel):
         
-        ResultPanel.comboSelection[1] = float(ResultPanel.comboboxILambda.GetValue())
-        #print ResultPanel.comboSelection[1]
+        data = ResultPanel.comboboxILambda.GetValue()
+        ResultPanel.comboSelection[1] = float(data)
+        if data == self.Ilambd[0]:
+            ResultPanel.labelFilterILambda.SetLabel(self.Filters[0])
+        if data == self.Ilambd[1]:
+            ResultPanel.labelFilterILambda.SetLabel(self.Filters[1])
+        if data == self.Ilambd[2]:
+            ResultPanel.labelFilterILambda.SetLabel(self.Filters[2])
+        if data == self.Ilambd[3]:
+            ResultPanel.labelFilterILambda.SetLabel(self.Filters[3])
+        if data == self.Ilambd[4]:
+            ResultPanel.labelFilterILambda.SetLabel(self.Filters[4])
         
     def OnDeltaLambdaCombo(self, event, ResultPanel):
         
-        ResultPanel.comboSelection[2] = float(ResultPanel.comboboxDeltaLambda.GetValue())
-        #print ResultPanel.comboSelection[2]
+        data = ResultPanel.comboboxDeltaLambda.GetValue()
+        ResultPanel.comboSelection[2] = float(data)
+        if data == self.deltalambd[0]:
+            ResultPanel.labelFilterDeltaLambda.SetLabel(self.Filters[0])
+        if data == self.deltalambd[1]:
+            ResultPanel.labelFilterDeltaLambda.SetLabel(self.Filters[1])
+        if data == self.deltalambd[2]:
+            ResultPanel.labelFilterDeltaLambda.SetLabel(self.Filters[2])
+        if data == self.deltalambd[3]:
+            ResultPanel.labelFilterDeltaLambda.SetLabel(self.Filters[3])
+        if data == self.deltalambd[4]:
+            ResultPanel.labelFilterDeltaLambda.SetLabel(self.Filters[4])
 
     ''' Defining a dialog to open a file(or multiple files)'''
     def onOpenFile1(self, event, DataPanel, ResultPanel):
-        # chosing a threshold
-#        threshold = 10000
-#        Cx = [0 for col in range(100)]
-#        Cy = [0 for col in range(100)]
-
-        # to retrieve the index of the chosen page 
-        #(the one we are working with now)
-        #global globalPageIndex
-        #print globalPageIndex
         
         flat_list=[]
         # create a file dialog
@@ -1112,17 +928,12 @@ class TabPanel(wx.Panel):
                 DataPanel.listPaths = flat_list
                 # getting the number of elements in the list of data (self.listPaths)
                 DataPanel.listLength = len(DataPanel.listPaths)
-                #print DataPanel.listLength
         #close the dialog
         dlg.Destroy()
         
         # putting the vaalues into the text control
         str1 = ''.join(DataPanel.listPaths)
         ResultPanel.chosenPath.SetValue(str1)
-        
-        # Invoking methods from class Calculator
-        #Calculator().ShowImages(DataPanel, DataPanel.listLength, DataPanel.listPaths, 
-        #          ResultPanel)
     
     ''' Defining a dialog to open a file(or multiple files)'''
     def onOpenFile2(self, event, DataPanel, ResultPanel):
@@ -1161,20 +972,13 @@ class TabPanel(wx.Panel):
         # to retrieve the index of the chosen page 
         #(the one we are working with now)
         global globalPageIndex
-        #print globalPageIndex
-        # Getting the name of the chosen tab
-        #self.pageName = self.GetPageText(self.pageIndex)
-        #print self.pageName
+
         # getting the value for the threshold from text Control
         ResultPanel.threshold = float(ResultPanel.textCtrlThreshold.GetValue())
         # Invoking methods from class Calculator
         Calculator().ShowImages(DataPanel, DataPanel.listLength, DataPanel.listPaths, 
                   ResultPanel, globalPageIndex)
         
-        #self.Update()
-        #DataPanel.Update()
-        #DataPanel.Refresh()
-        #ResultPanel.Update()
         #---------------------------------------------------------------------#
         #retrieving calculated data
         global globalTeff
@@ -1198,9 +1002,9 @@ class TabPanel(wx.Panel):
         global globalA0Error
         global globalA1Error
         global globalA2Error
+        # result for rsquared test for each particular filter
+        global globalRSquaredTest
         #---------------------------------------------------------------------#
-        #globalIlArray[globalPageIndex] = Il
-        #print ("globalIlArray ", globalIlArray)
         #filling in the global array to show its data on the resulting screen
         globalTeffArray[globalPageIndex] = globalTeff
         print ("globalTeffArray", globalTeffArray)
@@ -1221,9 +1025,9 @@ class TabPanel(wx.Panel):
         globalA0ErrorArray[globalPageIndex] = globalA0Error
         globalA1ErrorArray[globalPageIndex] = globalA1Error
         globalA2ErrorArray[globalPageIndex] = globalA2Error
-        #self.IlArray[self.f] = self.Il
-        #self.TeffArray[self.f] = self.Teff
-        #self.TtaulArray[self.f] = self.Ttaul
+        #putting the results for each r squred test into array of data
+        globalRSquaredTestArray[globalPageIndex] = globalRSquaredTest
+
 ###############################################################################
 ''' Custom Dialog Class '''
 class NameDialog(wx.Dialog):
@@ -1283,8 +1087,6 @@ class NameDialog(wx.Dialog):
 class AboutFrame(wx.Frame):
     def __init__(self):
         #First retrieve the screen size of the device
-        #screenSize = wx.DisplaySize()
-        #First retrieve the screen size of the device
         screenSize = wx.DisplaySize()
         screenWidth = screenSize[0]/2
         screenHeight = screenSize[1]/2
@@ -1338,20 +1140,12 @@ class CombinedInfoPanel(wx.Panel):
         # retrieving the names of pages
         #global globalPageName
         global globalListPageName
-        #creating an array of names of the tabs
-        #self.pageNameArray = ["" for name in xrange(0, globalNumberOfPages)]
         #---------------------------------------------------------------------#
         # identifying global variables to plot the resulting graph
         global globalIlArray
-        #globalIlArray = [0 for col in range(7)]
-        #globalIlArray[self.f] = self.Il
-        #print ("globalIlArray ", globalIlArray)
         
         global globalTeffArray
         global globalTeffErrorArray
-        #print ("globalTeffArray ", globalTeffArray)
-        #globalTeffArray = [0 for col in range(7)]
-        #globalTeffArray[self.f] = self.Teff
         
         global globalTtaulArray
         #print ("globalTtaulArray ", globalTtaulArray)
@@ -1367,6 +1161,8 @@ class CombinedInfoPanel(wx.Panel):
         global globalA0ErrorArray
         global globalA1ErrorArray
         global globalA2ErrorArray
+        # Instantiating the array of variable for R squared test
+        global globalRSquaredTestArray
         #Weighted average of effective temperature
         self.TeffSum = 0
         self.TeffErrorSum = 0
@@ -1378,43 +1174,16 @@ class CombinedInfoPanel(wx.Panel):
             self.TeffSum += globalTeffArray[f]/np.power(globalTeffErrorArray[f],2)
             self.TeffErrorSum += 1/np.power(globalTeffErrorArray[f],2)
             self.TeffErrorSum2 += np.power((globalTeffErrorArray[f]* np.power(globalTeffArray[f],-1)),2)
-            #self.TeffFinal = (np.sum(globalTeffArray/np.power(globalTeffErrorArray,2)) / (np.sum(1/np.power(globalTeffErrorArray,2))))
-            #o += 1
-    
-        #self.TeffFinal = self.TeffSum/globalNumberOfPages
-        #Calculating the final effictive temperature via weighted mean average 
-        #self.TeffFinal = (np.sum(globalTeffArray/np.power(globalTeffErrorArray,2)) / (np.sum(1/np.power(globalTeffErrorArray,2))))
+
         self.TeffFinal = self.TeffSum/self.TeffErrorSum
         # Calculating the error associated with final effective temperature
-        #self.TeffFinalError = self.TeffFinal*np.sqrt( np.sum(np.power((globalTeffErrorArray* np.power(globalTeffArray,-1) ),2)) )
         self.TeffFinalError = self.TeffFinal*np.sqrt(self.TeffErrorSum2)
-        #Teff = [6173.43, 6219.78, 6032.82]
-        #Sigma = [90.01, 438.82, 157.00 ]
-        #print(np.sum(Teff/np.power(Sigma,2)))
-        #print(np.sum(1/np.power(Sigma,2)))
-        
-        #print(np.sum(Teff/np.power(Sigma,2)) / np.sum(1/np.power(Sigma,2)))
-        
-        #FinalTeff = (np.sum(Teff/np.power(Sigma,2)) / (np.sum(1/np.power(Sigma,2))))
-        #print(FinalTeff)
-        #print("Final effective temperature!: ", FinalTeff)
-        
-        # Error associated with the finaal effective temperature
-        
-        #FinalErrTeff = FinalTeff*np.sqrt( np.sum(np.power((Sigma* np.power(Teff,-1) ),2)) )
-        #print("Final uncertainty in effective temperature!: ", FinalErrTeff)
-        
-        #print ('TeffFinal is ', self.TeffFinal)
-        #print ('A0Array', globalA0Array)
+
         self.tau = np.arange(0., 2., 0.01)
         self.tau23 = 0.666
-        #globalTtaulArray = [0 for col in range(7)]
-        #globalTtaulArray[self.f] = self.Ttaul
+
         #---------------------------------------------------------------------#
-        #self.listControlFinalDataTable = wx.ListCtrl(self, style = wx.LC_REPORT|wx.BORDER_SUNKEN|wx.LC_HRULES|wx.LC_VRULES)
         self.listControlFinalDataTable = EditableListCtrl(self, style = wx.LC_REPORT|wx.BORDER_SUNKEN|wx.LC_HRULES|wx.LC_VRULES)
-                                                #size = (400, 400), pos = (15, 15),
-                                                     #style = wx.LC_REPORT|wx.BORDER_SUNKEN|wx.LC_HRULES|wx.LC_VRULES)
         #---------------------------------------------------------------------#
         # Adding list of canvases which represnts and will show the final data for a given tab
         self.listFigure = [] # empty list
@@ -1431,21 +1200,14 @@ class CombinedInfoPanel(wx.Panel):
             self.listFigureCanvas.append(FigureCanvas(self, -1, self.listFigure[n]))
             # Adding canvases to the grid sizer
             self.graphSizer.Add(self.listFigureCanvas[n], 0, wx.ALL)
-            #if n >= 2:
-                #self.listGrid.append(gridlib.Grid(self, style=wx.BORDER_SUNKEN))
-                #self.listGrid.CreateGrid(25,8)
-    
-    
-                #self.tableSizer.Add(self.listGrid, 1, wx.EXPAND)
-                #self.resultSizer.Add(self.tableSizer, 0, wx.ALL)
         #---------------------------------------------------------------------#
-        self.ColShape = ['rv', 'rv', 'bs', 'c.', 'm^', 'b:']
-        self.ColShape2 = ['rv', 'rv', 'r-', 'b-.', 'm--', 'b:']
-        self.Color = ['y', 'm', 'r', 'b', 'c', 'm', 'y', 'm', 'r', 'b', 'c', 'm']
+        self.ColShape = ['rv', 'rv', 'bs', 'c.', 'm^', 'b:', 'rv', 'rv', 'bs', 'c.', 'm^', 'b:', 'rv', 'rv', 'bs', 'c.', 'm^', 'b:']
+        self.ColShape2 = ['rv', 'rv', 'r-', 'b-.', 'm--', 'b:', 'rv', 'rv', 'r-', 'b-.', 'm--', 'b:', 'rv', 'rv', 'r-', 'b-.', 'm--', 'b:']
+        self.Color = ['y', 'm', 'r', 'b', 'c', 'm', 'y', 'm', 'r', 'b', 'c', 'm', 'y', 'm', 'r', 'b', 'c', 'm', 'y', 'm', 'r', 'b', 'c', 'm']
         #self.Color = ['' for col in range (globalNumberOfPages)]
-        self.Color2 = ['y', 'r', 'r', 'b.', 'm', 'b']
-        self.Shape = [u'.', u'v', u's', u'.', u'^', u'o', u'.', u'v', u's', u'.', u'^', u'o'] # I changed the first one from u'--' to u'd'
-        self.Shape2 = [u'--', u'-', u'--', u'-.', u'--', u':']
+        self.Color2 = ['y', 'r', 'r', 'b.', 'm', 'b', 'y', 'r', 'r', 'b.', 'm', 'b', 'y', 'r', 'r', 'b.', 'm', 'b']
+        self.Shape = [u'.', u'v', u's', u'.', u'^', u'o', u'.', u'v', u's', u'.', u'^', u'o', u'.', u'v', u's', u'.', u'^', u'o', u'.', u'v', u's', u'.', u'^', u'o'] # I changed the first one from u'--' to u'd'
+        self.Shape2 = [u'--', u'-', u'-.', u'-.', u'--', u':', u'--', u'-', u'-.', u'-.', u'--', u':', u'--', u'-', u'-.', u'-.', u'--', u':', u'--', u'-', u'-.', u'-.', u'--', u':']
         self.lines = [0 for col in range(globalNumberOfPages)]
         self.lines2 = [0 for col in range(globalNumberOfPages)]
         self.labels = [0 for col in range(globalNumberOfPages)]
@@ -1482,7 +1244,7 @@ class CombinedInfoPanel(wx.Panel):
             self.listAxe[0].scatter(globalmiukArray[f], globalIlArray[f], marker=self.Shape[f])
             self.listAxe[0].plot(globalmiuk1Array[f], globalPolyvalArray[f], color = self.Color[f])
             #for plotting on the second canvas
-            self.listAxe[1].plot(self.tau, globalTtaulArray[f], marker = self.Shape[f], color=self.Color[f])#self.ColShape2[self.f])
+            self.listAxe[1].plot(self.tau, globalTtaulArray[f], linestyle = self.Shape2[f], color=self.Color[f])#self.ColShape2[self.f])
             self.listAxe[1].plot(self.tau23, globalTeffArray[f], marker = '*') #self.ColShape2[self.f])
             #horizontal line for temperature (different for each)
             self.listAxe[1].axhline(globalTeffArray[f], 0, self.tau23/2, color='black', linestyle='--')
@@ -1494,48 +1256,39 @@ class CombinedInfoPanel(wx.Panel):
         
         self.labels2 = [self.line.get_label() for self.line in self.lines2]
         self.listAxe[1].legend(self.lines2, self.labels2)
-        #self.line2 = mlines.Line2D([], [], color='m', linestyle=self.Shape2[2], label="B")
-        #self.line3 = mlines.Line2D([], [], color='r', linestyle=self.Shape2[1], label="I")
-        #self.line4 = mlines.Line2D([], [], color='b', linestyle=self.Shape2[3], label="R")
-        #self.lines = [self.line2, self.line3, self.line4]
-        #self.labels = [self.line.get_label() for self.line in self.lines]
-        #self.listAxe[1].legend(self.lines, self.labels)
+
         self.listFigureCanvas[1].draw()
         #---------------------------------------------------------------------#
         #putting data in the table
         self.listControlFinalDataTable.InsertColumn(0, "Quantities\Filters", wx.LIST_FORMAT_CENTER, width = 160)
         for columnIndex in xrange (0, globalNumberOfPages):
-        #self.listControlFinalDataTable.InsertColumn(0, u'first Column', wx.LIST_FORMAT_LEFT, width = 160)
-        #self.listControlFinalDataTable.InsertColumn(1, u'second Column', wx.LIST_FORMAT_RIGHT, width = 160)
+
             #here we are inserting the column
             self.listControlFinalDataTable.InsertColumn((columnIndex + 1), globalListPageName[columnIndex], wx.LIST_FORMAT_CENTER, width = 160)
-            #line = "Line %s" % self.index
         # inserting the names in the first column:
         self.listControlFinalDataTable.InsertStringItem(0, 'Averaged Teff')
         self.listControlFinalDataTable.InsertStringItem(0, 'Teff')
+        self.listControlFinalDataTable.InsertStringItem(0, 'R^2 test')
         self.listControlFinalDataTable.InsertStringItem(0, 'a2')
         self.listControlFinalDataTable.InsertStringItem(0, 'a1')
         self.listControlFinalDataTable.InsertStringItem(0, 'a0')
         
         self.trickyIndex = 0
-        #for rowIndex in xrange(1,6):
         for columnIndex in xrange (1, (globalNumberOfPages+1)):
             #here we are inserting the first value of the row
             self.listControlFinalDataTable.SetStringItem(0, columnIndex, "%.2f" % globalA0Array[self.trickyIndex] + '+/-' + "%.2f" % globalA0ErrorArray[self.trickyIndex])
             self.listControlFinalDataTable.SetStringItem(1, columnIndex, "%.2f" % globalA1Array[self.trickyIndex] + '+/-' + "%.2f" % globalA1ErrorArray[self.trickyIndex])
             self.listControlFinalDataTable.SetStringItem(2, columnIndex, "%.2f" % globalA2Array[self.trickyIndex] + '+/-' + "%.2f" % globalA2ErrorArray[self.trickyIndex])
-            self.listControlFinalDataTable.SetStringItem(3, columnIndex, "%.2f" % globalTeffArray[self.trickyIndex] + '+/-' + "%.2f" % globalTeffErrorArray[self.trickyIndex])
+            self.listControlFinalDataTable.SetStringItem(3, columnIndex, "%.2f" % globalRSquaredTestArray[self.trickyIndex])
+            self.listControlFinalDataTable.SetStringItem(4, columnIndex, "%.2f" % globalTeffArray[self.trickyIndex] + '+/-' + "%.2f" % globalTeffErrorArray[self.trickyIndex])
             self.trickyIndex = self.trickyIndex + 1
-                #self.list_ctrl.SetStringItem(rowIndex, 2, "USA")
-        self.listControlFinalDataTable.SetStringItem(4, 1, "%.2f" % self.TeffFinal + '+/-' + "%.2f" % self.TeffFinalError)
+        self.listControlFinalDataTable.SetStringItem(5, 1, "%.2f" % self.TeffFinal + '+/-' + "%.2f" % self.TeffFinalError)
         #putting table in the sizer
         self.tableSizer.Add(self.listControlFinalDataTable, 1, wx.ALL)
         #---------------------------------------------------------------------#
         #mixing everything up
         self.resultSizer.Add(self.graphSizer, 1, wx.ALL)
         self.resultSizer.Add(self.tableSizer, 1, wx.ALL)
-        #self.resultSizer.Add(self.listControlFinalDataTable, 1, wx.ALL)
-        #self.resultSizer.Add(self.saveButton, 1, wx.ALL)
         
         self.SetSizer(self.resultSizer)
         
@@ -1557,21 +1310,6 @@ class CombinedInfoPanel(wx.Panel):
             path = dlg.GetPath()
             print "You chose the following filename: %s" % path
         dlg.Destroy()
-        #print globalNumberOfPages
-        # retrieving the names of pages
-        #global globalPageName
-        # creating the array of filter names
-        #global globalListPageName
-        #self.globalListPageName = []
-        #for f in xrange (0, globalNumberOfPages):
-        #    self.globalListPageName = globalPageName
-        #print self.globalListPageName
-        #self.numberOfPages = DataTransfer.numberOfPages
-        #pub.subscribe(self.RetrievingData, 'data.retrieved')
-        
-    #def RetrievingData(self, numberOfPages):
-    #    self.numberOfPages = numberOfPages
-    #    #print self.numberOfPages
         
 ###############################################################################
 ''' This frame is for merged data '''
@@ -1599,15 +1337,12 @@ class MainFrame(wx.Frame):
     #----------------------------------------------------------------------
     def __init__(self):
         #First retrieve the screen size of the device
-        #screenSize = wx.DisplaySize()
-        #First retrieve the screen size of the device
         screenSize = wx.DisplaySize()
         screenWidth = screenSize[0]/1.1
         screenHeight = screenSize[1]/1.1
         
         wx.Frame.__init__(self, None, wx.ID_ANY, "SolarLimb", size = (screenWidth, screenHeight))
-        # defining a global variablbe, which is the identifier of the tab
-        #self.tab_num = 0
+        # defining a global (ok it is not that global) variablbe, which is the identifier of the tab
         self.tabIndex = 1
         
         # creating the array of filter names
@@ -1615,11 +1350,6 @@ class MainFrame(wx.Frame):
         #putting a limited value for filters,
         #because there is not that many existing :)
         globalListPageName = ["" for f in xrange(0, 100)]
-    
-        #global numberOfPages
-        #creating teh variable which will count the page index
-        #self.pageIndex = 0
-        #self.pageName = None
         # creating an AUI manager
         self.auiManager = aui.AuiManager()
         # tell AuiManager to manage this frame
@@ -1636,8 +1366,6 @@ class MainFrame(wx.Frame):
         # identifying global variables to plot the resulting graph
         global globalIlArray
         globalIlArray = [0 for col in range(100)]
-        #globalIlArray[self.f] = self.Il
-        #print ("globalIlArray ", globalIlArray)
         
         global globalTeffArray
         globalTeffArray = [0 for col in range(100)]
@@ -1672,15 +1400,15 @@ class MainFrame(wx.Frame):
         globalA1ErrorArray = [0 for col in range(100)]
         global globalA2ErrorArray
         globalA2ErrorArray = [0 for col in range(100)]
-        #self.testList = []
+
+        global globalRSquaredTestArray
+        globalRSquaredTestArray = [0 for col in range(100)]
         
     ''' defining a menu bar method '''
     def MenuBar(self):
         
         # Setting up the menu.
         fileMenu= wx.Menu()
-        #fileMenu.Append(101, "Open", "Open")
-        #fileMenu.Append(102, "Save", "Save")
         addTab = fileMenu.Append(103, "Add", "Add")
         combinedData = fileMenu.Append(104, "Combine","Combine")
         aboutTheProgram = fileMenu.Append(wx.ID_ABOUT, "About","About")
@@ -1702,8 +1430,6 @@ class MainFrame(wx.Frame):
         # adding an eventhandling to the quitTheApp variable
         self.Bind(wx.EVT_MENU, self.OnQuit, quitTheApp)
 
-        #self.SetSize((300, 200))
-        #self.SetTitle('Simple menu')
         self.Centre()
         self.Show(True)
         
@@ -1732,11 +1458,6 @@ class MainFrame(wx.Frame):
         # indentifying the global variable to address it from other classes
         global globalNumberOfPages
         globalNumberOfPages = self.auiNotebook.GetPageCount()
-        # creating the array of filter names
-        #global globalListPageName
-        #putting a limited value for filters,
-        #because there is not that many existing :)
-        #globalListPageName = ["" for f in xrange(0, globalNumberOfPages)]
 
     
     ''' Method for rewriting the tab label (like a dialog window) '''
@@ -1744,9 +1465,6 @@ class MainFrame(wx.Frame):
         dialog = NameDialog(self)
         dialog.ShowModal()
         tabName = dialog.tabResult
-        # calling the AddTab class which will create a new tab with the
-        # specified name
-        #if tabName != None:
         if tabName != "":
             self.AddTab(event, tabName)
         
@@ -1765,18 +1483,6 @@ class MainFrame(wx.Frame):
         globalPageName = self.auiNotebook.GetPageText(globalPageIndex)
         #inserting the name of the tab into the array for showing final data
         globalListPageName[globalPageIndex] = globalPageName
-        #print globalListPageName[globalPageIndex]
-        # retrieving the names of pages
-        #global globalPageName
-
-        # giving the value of the filter to the list 
-        #(we need to repeat this procedure every time because we 
-        #have dynamically chnaging tabs)
-        #globalListPageName[globalPageIndex] = globalPageName
-        #print globalListPageName
-        #for f in xrange (0, globalNumberOfPages):
-        #    globalListPageName = globalPageName
-        #print globalListPageName
     
     ''' method which will erase the page and you can get some information about erased page '''
     def OnPageClose(self, event):
@@ -1793,23 +1499,6 @@ class MainFrame(wx.Frame):
         # to retrieve the name of the page
         global globalPageName
         globalPageName = self.auiNotebook.GetPageText(globalPageIndex)
-        #print numberOfPages
-        # get the total number of pages in the notebook
-        #self.pageAmount = self.auiNotebook.GetPageCount()
-        #getting the index of the closed tab
-        #pageIndex = event.GetSelection()
-        #print pageIndex
-        #page = self.auiNotebook.GetPage(pageIndex)
-        # Page is the window held by the tab if you just wanted the tab text
-        # Getting the name of the tab
-        #tabName = self.auiNotebook.GetPageText(pageIndex)
-        #print tabName
-        # If you named the panel and want that
-        #name = page.GetName()
-        #print name
-        # when the page is closed, the number will be reduced
-        #self.tab_num -= 1
-        #print self.tab_num
             
     ''' Method for combining data from different tabs '''
     def CombinedData(self, event):        
