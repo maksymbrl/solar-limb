@@ -91,8 +91,11 @@ to obtain the final effective temperature
 
 ![equation](http://latex.codecogs.com/gif.latex?T_{eff}=T\left(\tau=\frac{2}{3}\right),&space;\quad&space;\quad&space;\quad&space;(13))
 
-## Program
-
-
-
 ## Examples
+
+<p align="center">
+  <img src="your_relative_path_here" width="350"/>
+  <img src="your_relative_path_here_number_2_large_name" width="350"/>
+</p>
+
+<img src="/examples/disappearing_galaxies2.gif?raw=true" width="800px">
