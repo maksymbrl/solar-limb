@@ -93,9 +93,20 @@ to obtain the final effective temperature
 
 ## Examples
 
+- **Averaged data for R filter**
+
 <p align="center">
-  <img src="/examples/Averaged_all_old1.png" width="350"/>
-  <img src="/examples/R Sun Average.png" width="350"/>
+  <img src="/examples/Averaged_all_old1.png" width="800"/>
 </p>
 
-<img src="/examples/disappearing_galaxies2.gif?raw=true" width="800px">
+- **Snapshot of the Sun**
+
+<p align="center">
+  <img src="/examples/R Sun Average.png" width="550"/>
+</p>
+
+- **Resulting table**
+
+<p align="center">
+  <img src="/examples/disappearing_galaxies2.gif?raw=true" width="800px">
+</p>
