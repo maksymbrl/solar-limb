@@ -6,7 +6,6 @@
 
 - [Theory](#theory)
 - [Data analysis](#data-analysis)
-- [Program](#program)
 - [Examples](#examples)
 
 ## Theory
