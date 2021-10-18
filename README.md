@@ -1,6 +1,6 @@
 # solar-limb
 
-> This work is based on the following project: https://www.overleaf.com/read/ywczhyybtfgs. The main idea was to write a self-consisten GUI application which will find the effective temperature of the Sun through analyzing images taken in the different wave-bands.
+> This work is based on the following project: https://github.com/maksymbrl/solar-limb/blob/master/report/AstroLab_Report.pdf. The main idea was to write a self-consisten GUI application which will find the effective temperature of the Sun through analyzing images taken in the different wave-bands.
 
 ## Table of Contents
 
@@ -10,12 +10,11 @@
 
 ## Theory
 
-> Here, I briefly state main concepts and equations used. For more complete description please refer to the https://www.overleaf.com/read/ywczhyybtfgs
+> Here, I briefly state main concepts and equations used. For more complete description please refer to the https://github.com/maksymbrl/solar-limb/blob/master/report/AstroLab_Report.pdf
 
 In general, to solve radiative trasfer equation
 
 ![equation](http://latex.codecogs.com/gif.latex?\frac{dI_\lambda}{\kappa_\lambda&space;ds}=\frac{dI_\lambda}{d\tau_{\lambda&space;s}}=-I_\lambda&space;&plus;&space;\frac{\epsilon_\lambda}{\kappa_\lambda}=-I_\lambda&space;&plus;&space;S_\lambda,&space;\quad&space;\quad&space;\quad&space;(1))
-
 
 is tedious task. Luckily, some simplifications can be made in study of stellar atmospheres:
 
